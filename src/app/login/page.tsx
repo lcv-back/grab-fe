@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -55,7 +56,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-sm text-gray-600">
           Chưa có tài khoản?
-          <a href="#" className="text-[#00BDF9] font-semibold ml-1">Đăng ký ngay</a>
+          <Link href="/register" className="text-[#00BDF9] font-semibold ml-1">Đăng ký ngay</Link>
         </div>
       </div>
     </main>

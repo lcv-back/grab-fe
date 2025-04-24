@@ -59,36 +59,45 @@ export default function RegisterPage() {
     <main className="flex flex-col items-center justify-center min-h-screen bg-white p-6 relative">
       {/* Logo */}
       <div className="absolute top-6 left-6 flex items-center space-x-2">
-        <Image src="/assets/logo.png" alt="iSymptom Logo" width={40} height={40} />
-        <span className="text-xl font-bold text-[#00BDF9]">iSymptom</span>
+        <Image src="/assets/logo.png" alt="iSymptom Logo" width={150} height={40} />
       </div>
 
       {/* Form Content */}
       <div className="w-full max-w-sm text-center">
         <h2 className="text-xl font-semibold text-gray-700 mb-6">Đăng ký</h2>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <input
-            name="email"
-            type="email"
-            placeholder="abc@gmail.com"
-            className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-          />
+        <form className="space-y-4 text-left" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Email</label>
+            <input
+              name="email"
+              type="email"
+              placeholder="abc@gmail.com"
+              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
+            />
+          </div>
 
-          <input
-            name="fullname"
-            type="text"
-            placeholder="Nguyễn Văn A"
-            className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-          />
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Họ và tên</label>
+            <input
+              name="fullname"
+              type="text"
+              placeholder="Nguyễn Văn A"
+              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
+            />
+          </div>
 
-          <div className="flex space-x-2">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Ngày sinh</label>
             <input
               name="birthday"
               type="date"
               className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
             />
+          </div>
 
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Giới tính</label>
             <div className="flex items-center space-x-2">
               <button
                 type="button"
@@ -107,19 +116,25 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Mật khẩu"
-            className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-          />
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Mật khẩu</label>
+            <input
+              name="password"
+              type="password"
+              placeholder="Mật khẩu"
+              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
+            />
+          </div>
 
-          <input
-            name="confirm"
-            type="password"
-            placeholder="Xác nhận mật khẩu"
-            className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-          />
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Xác nhận mật khẩu</label>
+            <input
+              name="confirm"
+              type="password"
+              placeholder="Xác nhận mật khẩu"
+              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
+            />
+          </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {success && <p className="text-green-500 text-sm">Đăng ký thành công!</p>}

@@ -78,7 +78,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex justify-between items-center text-sm text-gray-500">
-            <a href="#" className="hover:text-[#00BDF9]">Quên mật khẩu</a>
+            <Link href="/forgot-password" className="hover:text-[#00BDF9]">Quên mật khẩu</Link>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

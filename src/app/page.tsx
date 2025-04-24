@@ -35,7 +35,7 @@ export default function Home() {
             >
               Đăng nhập
             </button>
-            <button className="px-4 py-2 bg-[#00BDF9] hover:bg-[#00a8dd] text-white rounded-full">
+            <button className="px-4 py-2 bg-[#00BDF9] hover:bg-[#00a8dd] text-white rounded-full " onClick={() => router.push("/symptoms")}>
               Chế độ khách
             </button>
           </div>

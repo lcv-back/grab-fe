@@ -1,10 +1,11 @@
-'use client';
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { loginUser } from "@/lib/api/auth";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+"use client";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { loginUser } from '@/lib/api/auth';
+import { useAuth } from '@/context/AuthContext';
+import { Mail, Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function LoginPage() {
     const password = form.password.value;
 
     if (!email || !password) {
-      setError("Vui lòng nhập email và mật khẩu");
+      setError('Vui lòng nhập email và mật khẩu');
       return;
     }
 
@@ -36,62 +37,56 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
-      {/* Logo */}
-      <div className="absolute top-6 left-6 flex items-center space-x-2">
-        <Image src="/assets/logo.png" alt="iSymptom Logo" width={150} height={150} />
-      </div>
+    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-6">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        <div className="flex justify-center mb-6">
+          <Image src="/assets/logo.png" alt="iSymptom Logo" width={140} height={40} />
+        </div>
 
-      {/* Illustration */}
-      <div className="w-72 h-72 relative mb-6">
-        <Image
-          src="/assets/heart-rate.png"
-          alt="Medical Illustration"
-          fill
-          className="object-contain"
-        />
-      </div>
+        <h2 className="text-xl font-semibold text-[#005a74] mb-4 text-center">Đăng nhập</h2>
 
-      {/* Login Form */}
-      <div className="w-full max-w-sm text-center">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">Đăng nhập</h2>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="text-left">
-            <label className="block text-sm text-gray-600">Email</label>
-            <input
-              name="email"
-              type="email"
-              placeholder="abc@gmail.com"
-              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-            />
+        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+          <div>
+            <label className="block text-gray-600 mb-1">Email</label>
+            <div className="flex items-center border rounded-lg px-3 py-2">
+              <Mail size={16} className="text-gray-400 mr-2" />
+              <input
+                name="email"
+                type="email"
+                placeholder="abc@gmail.com"
+                className="w-full bg-transparent outline-none"
+              />
+            </div>
           </div>
 
-          <div className="text-left">
-            <label className="block text-sm text-gray-600">Mật khẩu</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="**************"
-              className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BDF9]"
-            />
+          <div>
+            <label className="block text-gray-600 mb-1">Mật khẩu</label>
+            <div className="flex items-center border rounded-lg px-3 py-2">
+              <Lock size={16} className="text-gray-400 mr-2" />
+              <input
+                name="password"
+                type="password"
+                placeholder="**************"
+                className="w-full bg-transparent outline-none"
+              />
+            </div>
           </div>
 
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <Link href="/forgot-password" className="hover:text-[#00BDF9]">Quên mật khẩu</Link>
+          <div className="text-right text-sm">
+            <Link href="/forgot-password" className="text-gray-500 hover:text-[#00BDF9]">Quên mật khẩu?</Link>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-red-400 hover:bg-red-500 text-white py-2 rounded-full mt-2"
+            className="w-full bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold"
           >
             Đăng nhập
           </button>
         </form>
 
-        <div className="mt-6 text-sm text-gray-600">
+        <div className="mt-6 text-sm text-gray-600 text-center">
           Chưa có tài khoản?
           <Link href="/register" className="text-[#00BDF9] font-semibold ml-1">Đăng ký ngay</Link>
         </div>

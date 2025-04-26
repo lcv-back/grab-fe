@@ -1,13 +1,24 @@
 "use client";
 import Header from '@/components/Header';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Plus, Search, X } from 'lucide-react';
+import Lottie from "lottie-react";
+
 
 export default function SymptomsPage() {
   const [input, setInput] = useState('');
   const [symptoms, setSymptoms] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
+
+  const [animationData, setAnimationData] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/assets/doctor-note.json")
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const addSymptom = () => {
     if (input.trim() && !symptoms.includes(input.trim())) {
@@ -28,15 +39,13 @@ export default function SymptomsPage() {
   const removeImage = () => setImage(null);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#] to-[#eaf9ff]">
+    <main className="min-h-screen">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-        <Image
-          src="/assets/medical-check.png"
-          alt="doctor cartoon"
-          width={200}
-          height={200}
-          className="w-[300px] md:w-[360px]"
+        <Lottie
+          animationData={animationData}
+          loop={true}
+          style={{ width: 500, height: 500 }}
         />
 
         <div className="bg-white rounded-3xl shadow p-8 w-full max-w-xl space-y-6">

@@ -20,7 +20,7 @@ export default function LandingPage() {
     const timer = setTimeout(() => {
       setIsFading(true);
       setTimeout(() => {
-        router.push("/home");
+        router.push("/");
       }, 500); // fade duration
     }, 4500); // animation duration
     return () => clearTimeout(timer);

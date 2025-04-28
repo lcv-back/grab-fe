@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -14,7 +15,7 @@ export default function Header() {
       </div>
       {user ? (
         <div className="flex items-center space-x-3">
-          <span className="text-gray-700 truncate max-w-[120px]">{user.fullname}</span>
+          <Link href={"/profile"} className="text-gray-700 truncate max-w-[120px]">{user.fullname}</Link>
           <button
             onClick={logout}
             className="px-3 py-1 bg-red-400 text-white rounded-full hover:bg-red-500"

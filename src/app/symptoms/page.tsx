@@ -1,35 +1,33 @@
 "use client";
-import Header from '@/components/Header';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Plus, Search, X } from 'lucide-react';
+import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
+import Header from "@/components/Header";
+import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
+import { X, Plus } from "lucide-react";
 
+type Symptom = {
+  id: number;
+  name: string;
+  description: string;
+};
 
 export default function SymptomsPage() {
-  const [input, setInput] = useState('');
-  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [image, setImage] = useState<File | null>(null);
-
   const [animationData, setAnimationData] = useState<any>(null);
+  const [token, setToken] = useState<string>("");
 
   useEffect(() => {
+    // Load animation
     fetch("/assets/doctor-note.json")
       .then((res) => res.json())
-      .then((data) => setAnimationData(data))
-      .catch((err) => console.error(err));
+      .then(setAnimationData)
+      .catch(console.error);
+
+    // Load token from localStorage
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) setToken(savedToken);
   }, []);
-
-  const addSymptom = () => {
-    if (input.trim() && !symptoms.includes(input.trim())) {
-      setSymptoms([...symptoms, input.trim()]);
-      setInput('');
-    }
-  };
-
-  const removeSymptom = (symptom: string) => {
-    setSymptoms(symptoms.filter((s) => s !== symptom));
-  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,37 +40,29 @@ export default function SymptomsPage() {
     <main className="min-h-screen">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-        <Lottie
-          animationData={animationData}
-          loop={true}
-          style={{ width: 500, height: 500 }}
-        />
+        <Lottie animationData={animationData} loop style={{ width: 500, height: 500 }} />
 
         <div className="bg-white rounded-3xl shadow p-8 w-full max-w-xl space-y-6">
           <div>
             <h2 className="text-lg font-semibold text-[#005a74] mb-2">Nhập triệu chứng</h2>
-            <div className="flex items-center border rounded-full px-4 py-2 focus-within:ring-2 ring-[#00BDF9]">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ví dụ: ho, sốt, đau bụng..."
-                className="flex-1 bg-transparent outline-none text-sm text-gray-700"
-              />
-              <button onClick={addSymptom} className="text-[#00BDF9] hover:text-[#009dcc]">
-                <Plus size={18} />
-              </button>
-            </div>
+            <AutocompleteSymptomInput
+              symptoms={symptoms}
+              setSymptoms={setSymptoms}
+              token={token}
+            />
           </div>
 
           {symptoms.length > 0 && (
             <div>
-              <p className="text-sm font-medium text-[#005a74] mb-2">Triệu chứng đã thêm:</p>
+              <p className="text-sm font-medium text-[#005a74] mb-2">Triệu chứng đã chọn:</p>
               <div className="flex flex-wrap gap-2">
                 {symptoms.map((s) => (
-                  <span key={s} className="bg-[#fca5a5] text-white px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                    {s}
-                    <button onClick={() => removeSymptom(s)}>
+                  <span
+                    key={s.id}
+                    className="bg-[#fca5a5] text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                  >
+                    {s.name}
+                    <button onClick={() => setSymptoms(symptoms.filter((x) => x.id !== s.id))}>
                       <X size={12} />
                     </button>
                   </span>
@@ -106,10 +96,6 @@ export default function SymptomsPage() {
           </div>
 
           <div className="flex justify-end mt-4">
-            {/* <label className="bg-[#fca311] hover:bg-[#e69500] text-white px-6 py-2 rounded-full font-semibold text-sm cursor-pointer">
-              <input type="file" accept="image/*" onChange={handleImageChange} hidden />
-              Thêm ảnh
-            </label> */}
             <button className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm">
               Kiểm tra
             </button>

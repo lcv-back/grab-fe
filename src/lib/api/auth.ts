@@ -28,5 +28,5 @@ export async function loginUser(data: { email: string; password: string }) {
 
   const json = await res.json();
   if (!res.ok) throw new Error(json.message || "Đăng nhập thất bại");
-  return json.token;
+  return json.access_token;
 }

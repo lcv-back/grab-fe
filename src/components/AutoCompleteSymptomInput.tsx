@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 type Suggestion = {
   id: number;
   name: string;
-  description: string;
 };
 
 export default function AutocompleteSymptomInput({
@@ -22,20 +21,31 @@ export default function AutocompleteSymptomInput({
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const fetchSuggestions = async (q: string) => {
-    const res = await fetch(
-      `http://127.0.0.1:3001/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await res.json();
-    setSuggestions(data);
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:3001/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+
+      // Ghép suggestion đầu tiên là free text của user
+      const freeTextSuggestion: Suggestion = {
+        id: -1,
+        name: q,
+      };
+
+      setSuggestions([freeTextSuggestion, ...data]);
+    } catch (err) {
+      console.error("Error fetching suggestions:", err);
+    }
   };
 
   const selectSymptom = (symptom: Suggestion) => {
-    if (!symptoms.find((s) => s.id === symptom.id)) {
+    if (!symptoms.some((s) => s.name.toLowerCase() === symptom.name.toLowerCase())) {
       setSymptoms([...symptoms, symptom]);
     }
     setQuery("");
@@ -45,10 +55,13 @@ export default function AutocompleteSymptomInput({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
+      e.preventDefault();
       setSelectedIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
     } else if (e.key === "ArrowUp") {
+      e.preventDefault();
       setSelectedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter" && selectedIndex >= 0) {
+      e.preventDefault();
       selectSymptom(suggestions[selectedIndex]);
     }
   };
@@ -60,11 +73,22 @@ export default function AutocompleteSymptomInput({
     }
 
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
     debounceTimer.current = setTimeout(() => {
       fetchSuggestions(query);
     }, 300);
   }, [query]);
+
+  const highlightMatch = (text: string, query: string) => {
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return text;
+    return (
+      <>
+        {text.substring(0, index)}
+        <strong>{text.substring(index, index + query.length)}</strong>
+        {text.substring(index + query.length)}
+      </>
+    );
+  };
 
   return (
     <div className="relative">
@@ -79,16 +103,13 @@ export default function AutocompleteSymptomInput({
         <div className="absolute bg-white shadow rounded w-full z-10 max-h-60 overflow-auto">
           {suggestions.map((sug, index) => (
             <div
-              key={sug.id}
+              key={sug.id === -1 ? `free-text-${sug.name}` : sug.id}
               className={`px-4 py-2 cursor-pointer ${
                 selectedIndex === index ? "bg-gray-200" : ""
               }`}
               onClick={() => selectSymptom(sug)}
             >
-              <strong>{sug.name}</strong> -{" "}
-              <span className="text-gray-500 text-sm">
-                {sug.description || "Không có mô tả"}
-              </span>
+              {highlightMatch(sug.name, query)}
             </div>
           ))}
         </div>

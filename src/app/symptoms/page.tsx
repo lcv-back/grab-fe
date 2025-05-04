@@ -8,7 +8,6 @@ import { X, Plus } from "lucide-react";
 type Symptom = {
   id: number;
   name: string;
-  description: string;
 };
 
 export default function SymptomsPage() {

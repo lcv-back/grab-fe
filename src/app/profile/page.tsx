@@ -41,27 +41,34 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     if (!fullname.trim() || !birthday || !gender) {
-      setError('Vui lòng điền đầy đủ thông tin.');
+      setError("Vui lòng điền đầy đủ thông tin.");
       return;
     }
-
+  
     try {
       setSaving(true);
-      setError('');
+      setError("");
       setSuccess(false);
+  
       await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
         fullname,
         birthday,
         gender,
       });
+  
       setSuccess(true);
       setEditMode(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Lỗi cập nhật thông tin.');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Lỗi cập nhật thông tin.");
+      } else {
+        setError("Unexpected error occurred. Please try again.");
+      }
     } finally {
       setSaving(false);
     }
   };
+  
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-6">

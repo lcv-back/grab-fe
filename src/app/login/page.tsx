@@ -31,9 +31,14 @@ export default function LoginPage() {
       const token = await loginUser({ email, password });
       login(token);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error occurred. Please try again.");
+      }
     }
+    
   };
 
   return (

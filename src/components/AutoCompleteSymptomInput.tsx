@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 type Suggestion = {
   id: number;
@@ -20,29 +20,31 @@ export default function AutocompleteSymptomInput({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchSuggestions = async (q: string) => {
-    try {
-      const res = await fetch(
-        `http://127.0.0.1:3001/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
+  const fetchSuggestions = useCallback(
+    async (q: string) => {
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:3001/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
 
-      // Ghép suggestion đầu tiên là free text của user
-      const freeTextSuggestion: Suggestion = {
-        id: -1,
-        name: q,
-      };
+        const freeTextSuggestion: Suggestion = {
+          id: -1,
+          name: q,
+        };
 
-      setSuggestions([freeTextSuggestion, ...data]);
-    } catch (err) {
-      console.error("Error fetching suggestions:", err);
-    }
-  };
+        setSuggestions([freeTextSuggestion, ...data]);
+      } catch (err) {
+        console.error("Error fetching suggestions:", err);
+      }
+    },
+    [token]
+  );
 
   const selectSymptom = (symptom: Suggestion) => {
     if (!symptoms.some((s) => s.name.toLowerCase() === symptom.name.toLowerCase())) {
@@ -76,7 +78,7 @@ export default function AutocompleteSymptomInput({
     debounceTimer.current = setTimeout(() => {
       fetchSuggestions(query);
     }, 300);
-  }, [query]);
+  }, [query, fetchSuggestions]);
 
   const highlightMatch = (text: string, query: string) => {
     const index = text.toLowerCase().indexOf(query.toLowerCase());

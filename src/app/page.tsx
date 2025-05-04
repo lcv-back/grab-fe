@@ -3,10 +3,11 @@
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { AnimationItem } from "lottie-web";
 
 export default function LandingPage() {
   const router = useRouter();
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
   const [isFading, setIsFading] = useState(false);
 
   useEffect(() => {

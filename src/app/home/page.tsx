@@ -3,11 +3,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import { useEffect, useState } from "react";
+import { AnimationItem } from 'lottie-web';
 
 
 export default function Home() {
   const router = useRouter();
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
   useEffect(() => {
     fetch("/assets/doctor-animation.json")
       .then((res) => res.json())

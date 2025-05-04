@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { registerUser, loginUser } from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Lock, User, Calendar, Mail, Smile } from 'lucide-react';
+import { Lock, User, Calendar, Mail } from 'lucide-react';
 
 export default function RegisterPage() {
   const [gender, setGender] = useState<string>('');
@@ -40,14 +40,20 @@ export default function RegisterPage() {
         gender,
         password,
       });
+    
       const token = await loginUser({ email, password });
       login(token);
       setSuccess(true);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Đã xảy ra lỗi không xác định.");
+      }
       setSuccess(false);
     }
+    
   };
 
   return (

@@ -25,8 +25,12 @@ export default function ForgotPasswordPage() {
       if (!res.ok) throw new Error(data.error || 'Lỗi không xác định');
 
       setMessage('Đã gửi liên kết đặt lại mật khẩu đến email của bạn.');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error occurred. Please try again.");
+      }
     }
   };
 

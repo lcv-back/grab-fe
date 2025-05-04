@@ -4,6 +4,7 @@ import Lottie from "lottie-react";
 import Header from "@/components/Header";
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import { X, Plus } from "lucide-react";
+import { AnimationItem } from "lottie-web";
 
 type Symptom = {
   id: number;
@@ -13,7 +14,7 @@ type Symptom = {
 export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [image, setImage] = useState<File | null>(null);
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
   const [token, setToken] = useState<string>("");
 
   useEffect(() => {

@@ -11,7 +11,7 @@ import animationData from '@/data/doctor-animation.json';
 export default function Home() {
   const router = useRouter();
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-white px-4 py-6">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-[#f9fafa] px-4 py-6">
       {/* Logo */}
       <div className="mb-10">
         <Image src="/assets/logo.png" alt="iSymptom Logo" width={200} height={77} />
@@ -26,7 +26,7 @@ export default function Home() {
 
         {/* Text Content */}
         <div className="text-center md:text-left flex-1">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Hello, how are you feeling today?</h2>
+          <h2 className="text-2xl text-black md:text-3xl font-bold mb-2">Hello, how are you feeling today?</h2>
           <p className="text-gray-600 mb-4 text-base md:text-lg">Start by choosing an option:</p>
 
           <div className="flex justify-center md:justify-start gap-4">

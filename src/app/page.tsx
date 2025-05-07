@@ -25,11 +25,11 @@ export default function LandingPage() {
 
   return (
     <main
-      className={`flex flex-col items-center justify-center h-screen w-screen p-4 transition-opacity duration-500 ${
+      className={`flex flex-col bg-[#f9fafa] items-center justify-center h-screen w-screen p-4 transition-opacity duration-500 ${
         isFading ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="w-[80%] max-w-[500px]">
+      <div className="w-[80%] max-w-[500px]"> 
         <Lottie animationData={animationData} loop={false} />
       </div>
     </main>

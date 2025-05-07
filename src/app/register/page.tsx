@@ -74,7 +74,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-gray-600 mb-1">Email</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Mail className="text-gray-400 mr-2" size={16} />
+              <Mail className="text-gray-600 mr-2" size={16} />
               <input name="email" type="email" placeholder="abc@gmail.com" className="w-full bg-transparent outline-none" />
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-gray-600 mb-1">Full Name</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <User className="text-gray-400 mr-2" size={16} />
+              <User className="text-gray-600 mr-2" size={16} />
               <input name="fullname" type="text" placeholder="John Doe" className="w-full bg-transparent outline-none" />
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-gray-600 mb-1">Date of Birth</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Calendar className="text-gray-400 mr-2" size={16} />
+              <Calendar className="text-gray-600 mr-2" size={16} />
               <input name="birthday" type="date" className="w-full bg-transparent outline-none" />
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-gray-600 mb-1">Password</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Lock className="text-gray-400 mr-2" size={16} />
+              <Lock className="text-gray-600 mr-2" size={16} />
               <input name="password" type="password" placeholder="Password" className="w-full bg-transparent outline-none" />
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function RegisterPage() {
           <div>
             <label className="block text-gray-600 mb-1">Confirm Password</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Lock className="text-gray-400 mr-2" size={16} />
+              <Lock className="text-gray-600 mr-2" size={16} />
               <input name="confirm" type="password" placeholder="Repeat password" className="w-full bg-transparent outline-none" />
             </div>
           </div>

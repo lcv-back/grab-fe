@@ -57,12 +57,12 @@ export default function LoginPage() {
           <div>
             <label className="block text-gray-600 mb-1">Email</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Mail size={16} className="text-gray-400 mr-2" />
+              <Mail size={16} className="text-gray-600 mr-2" />
               <input
                 name="email"
                 type="email"
                 placeholder="abc@gmail.com"
-                className="w-full bg-transparent outline-none"
+                className="w-full bg-transparent outline-none text-gray-600"
               />
             </div>
           </div>
@@ -70,12 +70,12 @@ export default function LoginPage() {
           <div>
             <label className="block text-gray-600 mb-1">Password</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
-              <Lock size={16} className="text-gray-400 mr-2" />
+              <Lock size={16} className="text-gray-600 mr-2" />
               <input
                 name="password"
                 type="password"
                 placeholder="**************"
-                className="w-full bg-transparent outline-none"
+                className="w-full bg-transparent outline-none text-gray-600"
               />
             </div>
           </div>

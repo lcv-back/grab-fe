@@ -18,13 +18,11 @@ export default function SymptomsPage() {
   const [token, setToken] = useState<string>("");
 
   useEffect(() => {
-    // Load animation
     fetch("/assets/doctor-note.json")
       .then((res) => res.json())
       .then(setAnimationData)
       .catch(console.error);
 
-    // Load token from localStorage
     const savedToken = localStorage.getItem("token");
     if (savedToken) setToken(savedToken);
   }, []);
@@ -37,14 +35,13 @@ export default function SymptomsPage() {
   const removeImage = () => setImage(null);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[#f9fafa]">
       <Header />
-      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-        <Lottie animationData={animationData} loop style={{ width: 500, height: 500 }} />
-
-        <div className="bg-white rounded-3xl shadow p-8 w-full max-w-xl space-y-6">
+      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
+        {/* Form Section */}
+        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-[#005a74] mb-2">Nhập triệu chứng</h2>
+            <h2 className="text-lg md:text-xl font-bold text-[#005a74] mb-2">Enter your symptoms</h2>
             <AutocompleteSymptomInput
               symptoms={symptoms}
               setSymptoms={setSymptoms}
@@ -52,27 +49,30 @@ export default function SymptomsPage() {
             />
           </div>
 
-          {symptoms.length > 0 && (
-            <div>
-              <p className="text-sm font-medium text-[#005a74] mb-2">Triệu chứng đã chọn:</p>
-              <div className="flex flex-wrap gap-2">
+          {/* Persistent container for selected symptoms */}
+          <div className="min-h-[56px] transition-all">
+            <p className="text-sm font-medium text-[#005a74] mb-2">Selected symptoms:</p>
+            {symptoms.length > 0 ? (
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-1">
                 {symptoms.map((s) => (
                   <span
-                    key={s.id}
+                    key={`${s.id}-${s.name}`}
                     className="bg-[#fca5a5] text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
                   >
                     {s.name}
-                    <button onClick={() => setSymptoms(symptoms.filter((x) => x.id !== s.id))}>
+                    <button onClick={() => setSymptoms(symptoms.filter((x) => x.id !== s.id || x.name !== s.name))}>
                       <X size={12} />
                     </button>
                   </span>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-gray-400 text-sm italic">No symptoms selected yet.</p>
+            )}
+          </div>
 
           <div>
-            <p className="text-sm font-medium text-[#005a74] mb-2">Hình ảnh:</p>
+            <p className="text-sm font-medium text-[#005a74] mb-2">Upload an image (optional):</p>
             {image ? (
               <div className="relative w-20 h-20">
                 <img
@@ -95,11 +95,16 @@ export default function SymptomsPage() {
             )}
           </div>
 
-          <div className="flex justify-end mt-4">
-            <button className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm">
-              Kiểm tra
+          <div className="flex justify-end">
+            <button className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm transition">
+              Check
             </button>
           </div>
+        </div>
+
+        {/* Lottie Section */}
+        <div className="w-full max-w-sm md:max-w-md">
+          {animationData && <Lottie animationData={animationData} loop />}
         </div>
       </div>
     </main>

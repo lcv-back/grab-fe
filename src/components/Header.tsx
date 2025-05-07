@@ -20,7 +20,7 @@ export default function Header() {
             onClick={logout}
             className="px-3 py-1 bg-red-400 text-white rounded-full hover:bg-red-500"
           >
-            Đăng xuất
+            Log Out
           </button>
         </div>
       ) : (
@@ -28,7 +28,7 @@ export default function Header() {
           onClick={() => router.push('/login')}
           className="px-3 py-1 bg-[#00BDF9] text-white rounded-full hover:bg-[#00acd6]"
         >
-          Đăng nhập
+          Sign In
         </button>
       )}
     </header>

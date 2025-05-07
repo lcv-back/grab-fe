@@ -30,12 +30,14 @@ export default function LandingPage() {
   if (!animationData) return null;
 
   return (
-    <main className={`flex flex-col items-center justify-center h-screen transition-opacity duration-500 ${isFading ? "opacity-0" : "opacity-100"}`}>
-      <Lottie
-        animationData={animationData}
-        loop={false}
-        style={{ width: 500, height: 500 }}
-      />
+    <main
+      className={`flex flex-col items-center justify-center h-screen w-screen p-4 transition-opacity duration-500 ${
+        isFading ? "opacity-0" : "opacity-100"
+      }`}
+    >
+      <div className="w-[80%] max-w-[500px]">
+        <Lottie animationData={animationData} loop={false} />
+      </div>
     </main>
   );
 }

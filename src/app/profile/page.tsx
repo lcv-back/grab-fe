@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { User, Mail, Calendar, Smile, Pencil } from 'lucide-react';
+import { User, Mail, Calendar, Smile, Pencil, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import axios from 'axios';
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
+
   const router = useRouter();
 
   const [editMode, setEditMode] = useState(false);
@@ -32,7 +34,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white">
-        <p className="text-gray-600">Đang tải...</p>
+        <p className="text-gray-600 text-sm">Loading profile...</p>
       </main>
     );
   }
@@ -40,46 +42,68 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const handleSave = async () => {
+    const token = localStorage.getItem('access_token');
     if (!fullname.trim() || !birthday || !gender) {
-      setError("Vui lòng điền đầy đủ thông tin.");
+      setError('Please fill in all required fields.');
       return;
     }
-  
+
     try {
       setSaving(true);
-      setError("");
+      setError('');
       setSuccess(false);
-  
-      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
-        fullname,
-        birthday,
-        gender,
-      });
-  
+
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/update-info`,
+        {
+          fullname,
+          birthday,
+          gender,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );      
+
       setSuccess(true);
       setEditMode(false);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Lỗi cập nhật thông tin.");
+        setError(err.response?.data?.error || 'Failed to update profile.');
       } else {
-        setError("Unexpected error occurred. Please try again.");
+        setError('Unexpected error occurred. Please try again.');
       }
     } finally {
       setSaving(false);
     }
   };
-  
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md space-y-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-[#005a74]">Thông tin tài khoản</h2>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-4 sm:p-6">
+      
+
+      <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-6 animate-slide-up">
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          <Image
+            src="/assets/logo.png"
+            alt="iSymptom Logo"
+            width={140}
+            height={40}
+            className="cursor-pointer"
+            onClick={() => router.push('/')}
+          />
+        </div>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-[#005a74]">Account Information</h2>
           <button
             onClick={() => setEditMode(!editMode)}
             className="text-[#00BDF9] hover:underline flex items-center"
           >
-            <Pencil size={18} className="mr-1" /> {editMode ? 'Hủy' : 'Chỉnh sửa'}
+            <Pencil size={18} className="mr-1" />
+            {editMode ? 'Cancel' : 'Edit'}
           </button>
         </div>
 
@@ -98,7 +122,7 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Email (read only) */}
+          {/* Email (readonly) */}
           <div className="flex items-center gap-3">
             <Mail size={20} className="text-[#00BDF9]" />
             <span>{user.email}</span>
@@ -115,7 +139,7 @@ export default function ProfilePage() {
                 onChange={(e) => setBirthday(e.target.value)}
               />
             ) : (
-              <span>{new Date(birthday).toLocaleDateString('vi-VN')}</span>
+              <span>{new Date(birthday).toLocaleDateString()}</span>
             )}
           </div>
 
@@ -128,26 +152,36 @@ export default function ProfilePage() {
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
-                <option value="other">Khác</option>
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
               </select>
             ) : (
-              <span>{gender === 'male' ? 'Nam' : gender === 'female' ? 'Nữ' : 'Khác'}</span>
+              <span>
+                {gender === 'male' ? 'Male' : gender === 'female' ? 'Female' : 'Other'}
+              </span>
             )}
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-        {success && <p className="text-green-500 text-sm mt-2">Cập nhật thành công!</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {success && <p className="text-green-500 text-sm">Profile updated successfully!</p>}
 
         {editMode && (
           <button
             onClick={handleSave}
-            className="w-full mt-4 bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold"
+            className="w-full mt-4 flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold transition-all"
             disabled={saving}
           >
-            {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+            {saving ? (
+              <>
+                <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                Saving...
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </button>
         )}
       </div>

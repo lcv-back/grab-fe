@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api/auth';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { user, login } = useAuth();
 
@@ -23,10 +24,11 @@ export default function LoginPage() {
     const password = form.password.value;
 
     if (!email || !password) {
-      setError('Vui lòng nhập email và mật khẩu');
+      setError('Please enter your email and password');
       return;
     }
 
+    setIsLoading(true);
     try {
       const token = await loginUser({ email, password });
       login(token);
@@ -37,18 +39,19 @@ export default function LoginPage() {
       } else {
         setError("Unexpected error occurred. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
-    
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-6">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+    <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white px-4 py-8">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-8">
         <div className="flex justify-center mb-6">
           <Image src="/assets/logo.png" alt="iSymptom Logo" width={140} height={40} />
         </div>
 
-        <h2 className="text-xl font-semibold text-[#005a74] mb-4 text-center">Đăng nhập</h2>
+        <h2 className="text-xl font-semibold text-[#005a74] mb-4 text-center">Sign In</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div>
@@ -65,7 +68,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Mật khẩu</label>
+            <label className="block text-gray-600 mb-1">Password</label>
             <div className="flex items-center border rounded-lg px-3 py-2">
               <Lock size={16} className="text-gray-400 mr-2" />
               <input
@@ -78,22 +81,32 @@ export default function LoginPage() {
           </div>
 
           <div className="text-right text-sm">
-            <Link href="/forgot-password" className="text-gray-500 hover:text-[#00BDF9]">Quên mật khẩu?</Link>
+            <Link href="/forgot-password" className="text-gray-500 hover:text-[#00BDF9]">Forgot password?</Link>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold"
+            disabled={isLoading}
+            className={`w-full flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold transition-colors ${
+              isLoading ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
-            Đăng nhập
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                Signing in...
+              </>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
 
         <div className="mt-6 text-sm text-gray-600 text-center">
-          Chưa có tài khoản?
-          <Link href="/register" className="text-[#00BDF9] font-semibold ml-1">Đăng ký ngay</Link>
+          Don't have an account?
+          <Link href="/register" className="text-[#00BDF9] font-semibold ml-1">Register now</Link>
         </div>
       </div>
     </main>

@@ -24,7 +24,7 @@ export default function AutocompleteSymptomInput({
     async (q: string) => {
       try {
         const res = await fetch(
-          `http://127.0.0.1:3001/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/autocomplete?query=${encodeURIComponent(q)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ export default function AutocompleteSymptomInput({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Nhập triệu chứng..."
+        placeholder="Enter symptom..."
         className="w-full border rounded-full px-4 py-2 outline-none text-sm"
       />
       {suggestions.length > 0 && (

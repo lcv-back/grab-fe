@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3001";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function registerUser(data: {
   email: string;
@@ -12,10 +12,10 @@ export async function registerUser(data: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  console.log("Gửi đăng ký:", data);
+  //console.log("Gửi đăng ký:", data);
 
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error || "Đăng ký thất bại");
+  if (!res.ok) throw new Error(json.error || "Registration failed");
   return json;
 }
 
@@ -27,6 +27,6 @@ export async function loginUser(data: { email: string; password: string }) {
   });
 
   const json = await res.json();
-  if (!res.ok) throw new Error(json.message || "Đăng nhập thất bại");
+  if (!res.ok) throw new Error(json.message || "Login failed");
   return json.access_token;
 }

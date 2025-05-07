@@ -38,7 +38,7 @@ export default function Home() {
               Login
             </button>
             <button
-              className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm md:text-base"
+              className="px-5 py-2 bg-green-400 hover:bg-green-600 text-white rounded-full text-sm md:text-base"
               onClick={() => router.push('/register')}
             >
               Register

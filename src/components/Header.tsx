@@ -9,28 +9,35 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <header className="flex justify-between items-center px-4 py-2 text-sm">
-      <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}> 
-        <Image src="/assets/logo.png" alt="Logo" width={120} height={30} />
-      </div>
-      {user ? (
-        <div className="flex items-center space-x-3">
-          <Link href={"/profile"} className="text-gray-700 truncate max-w-[120px]">{user.fullname}</Link>
-          <button
-            onClick={logout}
-            className="px-3 py-1 bg-red-400 text-white rounded-full hover:bg-red-500"
-          >
-            Log Out
-          </button>
+    <header className="bg-white shadow-md px-6 py-3 sticky top-0 z-50">
+      <div className="flex items-center justify-between max-w-7xl mx-auto">
+        {/* Logo */}
+        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}>
+          <Image src="/assets/logo.png" alt="iSymptom Logo" width={140} height={36} />
         </div>
-      ) : (
-        <button
-          onClick={() => router.push('/login')}
-          className="px-3 py-1 bg-[#00BDF9] text-white rounded-full hover:bg-[#00acd6]"
-        >
-          Sign In
-        </button>
-      )}
+
+        {/* Right section */}
+        {user ? (
+          <div className="flex items-center space-x-4">
+            <Link href="/profile" className="text-[#005a74] font-medium hover:underline truncate max-w-[140px]">
+              {user.fullname}
+            </Link>
+            <button
+              onClick={logout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition"
+            >
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => router.push('/login')}
+            className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-4 py-1.5 rounded-full text-sm font-semibold transition"
+          >
+            Sign In
+          </button>
+        )}
+      </div>
     </header>
   );
 }

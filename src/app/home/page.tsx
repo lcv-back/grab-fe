@@ -1,8 +1,8 @@
-"use client";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import Lottie from "lottie-react";
-import { useEffect, useState } from "react";
+'use client';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import Lottie from 'lottie-react';
+import { useEffect, useState } from 'react';
 import { AnimationItem } from 'lottie-web';
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
   const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
 
   useEffect(() => {
-    fetch("/assets/doctor-animation.json")
+    fetch('/assets/doctor-animation.json')
       .then((res) => res.json())
       .then((data) => setAnimationData(data))
       .catch((err) => console.error(err));
@@ -27,22 +27,26 @@ export default function Home() {
       <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-6xl">
         {/* Doctor Animation */}
         <div className="w-full max-w-sm md:max-w-md">
-          {animationData && (
-            <Lottie animationData={animationData} loop />
-          )}
+          {animationData && <Lottie animationData={animationData} loop />}
         </div>
 
         {/* Text Content */}
         <div className="text-center md:text-left flex-1">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Xin chào, hôm nay bạn thế nào?</h2>
-          <p className="text-gray-600 mb-4 text-base md:text-lg">Bắt đầu bằng cách:</p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">Hello, how are you feeling today?</h2>
+          <p className="text-gray-600 mb-4 text-base md:text-lg">Start by choosing an option:</p>
 
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start gap-4">
             <button
-              className="px-5 py-2 bg-red-400 hover:bg-red-500 text-white rounded-full text-sm md:text-base"
-              onClick={() => router.push("/login")}
+              className="px-5 py-2 bg-[#00BDF9] hover:bg-[#00acd6] text-white rounded-full text-sm md:text-base"
+              onClick={() => router.push('/login')}
             >
-              Đăng nhập
+              Login
+            </button>
+            <button
+              className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm md:text-base"
+              onClick={() => router.push('/register')}
+            >
+              Register
             </button>
           </div>
         </div>

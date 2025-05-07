@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
-      fetch(`${BASE_URL}/auth/me`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

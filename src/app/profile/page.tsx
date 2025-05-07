@@ -57,7 +57,7 @@ export default function ProfilePage() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/update-info`,
         {
           fullname,
-          birthday,
+          birthday: new Date(birthday).toISOString(),
           gender,
         },
         {

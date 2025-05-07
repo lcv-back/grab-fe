@@ -106,7 +106,7 @@ export default function AutocompleteSymptomInput({
           {suggestions.map((sug, index) => (
             <div
               key={sug.id === -1 ? `free-text-${sug.name}` : sug.id}
-              className={`px-4 py-2 cursor-pointer ${
+              className={`px-4 py-2 cursor-pointer text-gray-600 ${
                 selectedIndex === index ? "bg-gray-200" : ""
               }`}
               onClick={() => selectSymptom(sug)}

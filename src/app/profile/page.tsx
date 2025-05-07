@@ -152,10 +152,8 @@ export default function ProfilePage() {
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
-                <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
               </select>
             ) : (
               <span>

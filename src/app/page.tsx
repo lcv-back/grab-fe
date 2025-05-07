@@ -1,8 +1,9 @@
 "use client";
 
-import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import dynamic from 'next/dynamic';
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/logo-landing.json';
 
 export default function LandingPage() {

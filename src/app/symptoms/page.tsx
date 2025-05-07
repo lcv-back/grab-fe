@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import Lottie from "lottie-react";
 import Header from "@/components/Header";
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import { X, Plus } from "lucide-react";
+import dynamic from 'next/dynamic';
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
 
 

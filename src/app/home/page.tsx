@@ -1,7 +1,8 @@
 'use client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Lottie from 'lottie-react';
+import dynamic from 'next/dynamic';
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-animation.json';
 
 

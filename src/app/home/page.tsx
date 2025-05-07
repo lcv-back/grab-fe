@@ -2,20 +2,13 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Lottie from 'lottie-react';
-import { useEffect, useState } from 'react';
-import { AnimationItem } from 'lottie-web';
+import animationData from '@/data/doctor-animation.json';
+
+
+
 
 export default function Home() {
   const router = useRouter();
-  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
-
-  useEffect(() => {
-    fetch('/assets/doctor-animation.json')
-      .then((res) => res.json())
-      .then((data) => setAnimationData(data))
-      .catch((err) => console.error(err));
-  }, []);
-
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-white px-4 py-6">
       {/* Logo */}

@@ -3,19 +3,12 @@
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { AnimationItem } from "lottie-web";
+import animationData from '@/data/logo-landing.json';
 
 export default function LandingPage() {
   const router = useRouter();
-  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
   const [isFading, setIsFading] = useState(false);
 
-  useEffect(() => {
-    fetch("/assets/logo-landing.json")
-      .then((res) => res.json())
-      .then((data) => setAnimationData(data))
-      .catch((err) => console.error(err));
-  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {

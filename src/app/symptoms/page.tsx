@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Lottie from "lottie-react";
 import Header from "@/components/Header";
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import { X, Plus } from "lucide-react";
-import { AnimationItem } from "lottie-web";
+import animationData from '@/data/doctor-note.json';
+
 
 type Symptom = {
   id: number;
@@ -14,16 +15,10 @@ type Symptom = {
 export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [image, setImage] = useState<File | null>(null);
-  const [animationData, setAnimationData] = useState<AnimationItem | null>(null);
   const [token, setToken] = useState<string>("");
 
   useEffect(() => {
-    fetch("/assets/doctor-note.json")
-      .then((res) => res.json())
-      .then(setAnimationData)
-      .catch(console.error);
-
-    const savedToken = localStorage.getItem("token");
+    const savedToken = localStorage.getItem("access_token");
     if (savedToken) setToken(savedToken);
   }, []);
 

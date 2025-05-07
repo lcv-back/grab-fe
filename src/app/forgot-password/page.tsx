@@ -51,14 +51,14 @@ export default function ForgotPasswordPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm text-left">
           <label className="block text-gray-600 mb-1">Email</label>
           <div className="flex items-center border rounded-lg px-3 py-2">
-            <Mail size={16} className="text-gray-400 mr-2" />
+            <Mail size={16} className="text-gray-600 mr-2" />
             <input
               name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full bg-transparent outline-none"
+              className="w-full bg-transparent outline-none text-gray-600"
             />
           </div>
 

@@ -6,6 +6,8 @@ import { X, Plus } from "lucide-react";
 import dynamic from 'next/dynamic';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 
 type Symptom = {
@@ -17,11 +19,16 @@ export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [token, setToken] = useState<string>("");
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
     const savedToken = localStorage.getItem("access_token");
     if (savedToken) setToken(savedToken);
-  }, []);
+  }, [router, user, loading]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,7 +106,7 @@ export default function SymptomsPage() {
         </div>
 
         {/* Lottie Section */}
-        <div className="w-full max-w-sm md:max-w-md">
+        <div className="w-full max-w-[240px] sm:max-w-sm md:max-w-md">
           {animationData && <Lottie animationData={animationData} loop />}
         </div>
       </div>

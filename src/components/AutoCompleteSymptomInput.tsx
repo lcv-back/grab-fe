@@ -99,7 +99,7 @@ export default function AutocompleteSymptomInput({
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Enter symptom..."
-        className="w-full border rounded-full px-4 py-2 outline-none text-sm"
+        className="w-full border rounded-full px-4 py-2 outline-none text-sm text-gray-600"
       />
       {suggestions.length > 0 && (
         <div className="absolute bg-white shadow rounded w-full z-10 max-h-60 overflow-auto">

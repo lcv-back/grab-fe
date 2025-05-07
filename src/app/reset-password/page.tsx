@@ -77,12 +77,12 @@ function ResetPasswordForm() {
         <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <label className="block text-sm text-gray-700">New Password</label>
           <div className="flex items-center border rounded-lg px-3 py-2">
-            <Lock size={16} className="text-gray-400 mr-2" />
+            <Lock size={16} className="text-gray-600 mr-2" />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 outline-none text-sm"
+              className="flex-1 outline-none text-sm text-gray-600"
               placeholder="Enter new password"
               required
             />

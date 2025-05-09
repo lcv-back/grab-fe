@@ -7,7 +7,7 @@ import { X, Plus } from "lucide-react";
 import dynamic from 'next/dynamic';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from 'framer-motion';
 import { marked } from 'marked';
@@ -103,6 +103,9 @@ export default function SymptomsPage() {
   const [answers, setAnswers] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
     const savedToken = localStorage.getItem("access_token");
     if (savedToken) setToken(savedToken);
   }, [router, user, loading]);
@@ -244,14 +247,34 @@ export default function SymptomsPage() {
                       <span className="text-sm text-gray-600">{p.confidence}% match</span>
                     </summary>
                     {p.markdown && (
-                      <div className="mt-4 prose prose-sm sm:prose-base max-w-none text-gray-800 leading-relaxed bg-white rounded-xl p-4 border border-gray-200 shadow-sm" dangerouslySetInnerHTML={{ __html: marked.parse(p.markdown) }} />
+                      <div
+                        className="mt-4 prose prose-sm sm:prose-base max-w-none text-gray-800 leading-relaxed bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+                        dangerouslySetInnerHTML={{ __html: marked.parse(p.markdown) }}
+                      />
                     )}
                   </details>
                 </li>
               ))}
             </ul>
+
+            {/* OK Button */}
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => {
+                  setSymptoms([]);
+                  setImage(null);
+                  setAnswers([]);
+                  setFollowUpSymptoms([]);
+                  setStep('form');
+                }}
+                className="px-6 py-2 bg-[#00BDF9] hover:bg-[#00acd6] text-white rounded-full font-semibold"
+              >
+                OK
+              </button>
+            </div>
           </div>
         )}
+
 
         {/* Lottie Section */}
         <div className="w-full max-w-[240px] sm:max-w-sm md:max-w-md">

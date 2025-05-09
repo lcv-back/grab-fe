@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -12,7 +12,7 @@ export default function Header() {
     <header className="bg-white shadow-md px-6 py-3 sticky top-0 z-50">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
-        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}>
+        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/symptoms')}>
           <Image src="/assets/logo.png" alt="iSymptom Logo" width={140} height={36} />
         </div>
 

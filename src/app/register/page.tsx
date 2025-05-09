@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { registerUser, loginUser } from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Lock, User, Calendar, Mail, Loader2 } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -32,7 +32,7 @@ export default function RegisterPage() {
       return;
     }
     if (!gender) return setError('Please select a gender');
-    if (password.length < 6) return setError('Password must be at least 6 characters');
+    if (password.length < 8) return setError('Password must be at least 8 characters');
     if (password !== confirm) return setError('Password confirmation does not match');
 
     setIsLoading(true);

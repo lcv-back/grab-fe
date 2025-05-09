@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api/auth';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {

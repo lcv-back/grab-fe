@@ -1,15 +1,14 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { User, Mail, Calendar, Smile, Pencil, Loader2 } from 'lucide-react';
+import { User, Mail, Calendar, Smile, Pencil, Loader2, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import axios from 'axios';
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
-
   const router = useRouter();
 
   const [editMode, setEditMode] = useState(false);
@@ -65,7 +64,7 @@ export default function ProfilePage() {
             Authorization: `Bearer ${token}`,
           },
         }
-      );      
+      );
 
       setSuccess(true);
       setEditMode(false);
@@ -82,9 +81,21 @@ export default function ProfilePage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-4 sm:p-6">
+
       
 
+      {/* Profile Card */}
       <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-6 animate-slide-up">
+        {/* Back Button */}
+        <div className="w-full max-w-md mb-4">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-sm text-[#00BDF9] hover:underline"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+        </div>
         {/* Logo */}
         <div className="flex justify-center mb-4">
           <Image
@@ -96,6 +107,7 @@ export default function ProfilePage() {
             onClick={() => router.push('/')}
           />
         </div>
+
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-[#005a74]">Account Information</h2>
           <button

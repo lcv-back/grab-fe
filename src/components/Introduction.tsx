@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
@@ -31,13 +29,13 @@ export default function Introduction({
         <h2 className="text-lg md:text-xl font-bold text-[#005a74]">Terms of Service</h2>
         <ul className="list-disc pl-5 space-y-2 text-gray-700">
           <li>
-            iSymptom isn’t a diagnosis. It’s only for your information and not a qualified medical opinion.
+            iSymptom isn&apos;t a diagnosis. It&apos;s only for your information and not a qualified medical opinion.
           </li>
           <li>
-            iSymptom   isn’t for emergencies. Call your local emergency number right away when there’s a health emergency.
+            iSymptom   isn&apos;t for emergencies. Call your local emergency number right away when there&apos;s a health emergency.
           </li>
           <li>
-            Your data is safe. The information you give won’t be shared or used to identify you.
+            Your data is safe. The information you give won&apos;t be shared or used to identify you.
           </li>
         </ul>
 
@@ -92,12 +90,12 @@ export default function Introduction({
         <div>
           <h1 className="text-lg md:text-xl font-bold text-[#005a74] mb-4">Check your symptoms</h1>
           <p className="text-[#333] text-base leading-relaxed">
-            Take a short symptom assessment. The information you give is safe and won’t be shared.
+            Take a short symptom assessment. The information you give is safe and won&apos;t be shared.
             Your results will include:
           </p>
           <ul className="list-disc pl-6 mt-3 text-gray-700">
             <li>Possible causes of symptoms.</li>
-            <li>Description of each disease you're might having.</li>
+            <li>Description of each disease you&apos;re might having.</li>
           </ul>
         </div>
 

@@ -8,15 +8,15 @@ import FollowupQuestions from "@/components/FollowupQuestions";
 import DiagnosisResult from "@/components/DiagnosisResult";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import type { Symptom } from "@/types";
+import type { Symptom, Prediction } from "@/types";
 
 const mockFollowUpSymptoms = ['Headache', 'Nausea', 'Shortness of breath'];
-const mockPredictions = [
-  { disease: "A53 diffuse large b-cell lymphoma", confidence: 92, markdown: "### Comprehensive Overview of ..." },
-  { disease: "COVID-19", confidence: 85 },
-  { disease: "Common Cold", confidence: 76 },
-  { disease: "Allergy", confidence: 65 },
-  { disease: "Bronchitis", confidence: 50 }
+const mockPredictions: Prediction[] = [
+  { disease: { name: "A53 diffuse large b-cell lymphoma", description: "### Comprehensive Overview of ..." }, confidence: 92 },
+  { disease: { name: "COVID-19" }, confidence: 85 },
+  { disease: { name: "Common Cold" }, confidence: 76 },
+  { disease: { name: "Allergy" }, confidence: 65 },
+  { disease: { name: "Bronchitis" }, confidence: 50 }
 ];
 
 export default function SymptomsPage() {

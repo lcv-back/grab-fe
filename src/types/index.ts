@@ -12,3 +12,13 @@ export type Symptom = {
     id?: number;
     name: string;
 };
+
+export type Disease ={
+  name: string;
+  description?: string; // Markdown string
+}
+
+export type Prediction = {
+  disease: Disease;
+  confidence: number;
+}

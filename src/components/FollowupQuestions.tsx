@@ -1,11 +1,18 @@
 import { motion, AnimatePresence } from "framer-motion";
 
+interface FollowupQuestionsProps {
+  question: string;
+  currentQ: number;
+  onAnswer: (answer: string) => void;
+  onBack: () => void;
+}
+
 export default function FollowupQuestions({
   question,
   currentQ,
   onAnswer,
   onBack
-}: any) {
+}: FollowupQuestionsProps) {
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
       <AnimatePresence mode="wait">

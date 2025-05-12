@@ -90,8 +90,7 @@ export default function SymptomForm({
   };
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
-      <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6">
+    <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
         <div>
           <h2 className="text-lg md:text-xl font-bold text-[#005a74] mb-2">Enter your symptoms</h2>
           <AutocompleteSymptomInput symptoms={symptoms} setSymptoms={setSymptoms} token={token} />
@@ -150,10 +149,5 @@ export default function SymptomForm({
           </button>
         </div>
       </div>
-
-      <div className="w-full max-w-[240px] sm:max-w-sm md:max-w-md">
-        <Lottie animationData={animationData} loop />
-      </div>
-    </div>
   );
 }

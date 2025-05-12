@@ -7,3 +7,8 @@ export type User = {
     createdAt?: string;
     updatedAt?: string;
   };
+
+export type Symptom = {
+    id?: number;
+    name: string;
+};

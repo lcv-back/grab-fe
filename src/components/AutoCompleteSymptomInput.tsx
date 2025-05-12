@@ -1,22 +1,18 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-
-type Suggestion = {
-  id: number;
-  name: string;
-};
+import type { Symptom } from "@/types"; // import từ types.ts
 
 export default function AutocompleteSymptomInput({
   symptoms,
   setSymptoms,
   token,
 }: {
-  symptoms: Suggestion[];
-  setSymptoms: (s: Suggestion[]) => void;
+  symptoms: Symptom[];
+  setSymptoms: (s: Symptom[]) => void;
   token: string;
 }) {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<Symptom[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -33,7 +29,7 @@ export default function AutocompleteSymptomInput({
         );
         const data = await res.json();
 
-        const freeTextSuggestion: Suggestion = {
+        const freeTextSuggestion: Symptom = {
           id: -1,
           name: q,
         };
@@ -46,7 +42,7 @@ export default function AutocompleteSymptomInput({
     [token]
   );
 
-  const selectSymptom = (symptom: Suggestion) => {
+  const selectSymptom = (symptom: Symptom) => {
     if (!symptoms.some((s) => s.name.toLowerCase() === symptom.name.toLowerCase())) {
       setSymptoms([...symptoms, symptom]);
     }

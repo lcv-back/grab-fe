@@ -81,9 +81,6 @@ export default function ProfilePage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-4 sm:p-6">
-
-      
-
       {/* Profile Card */}
       <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-6 animate-slide-up">
         {/* Back Button */}

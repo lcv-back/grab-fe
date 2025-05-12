@@ -20,5 +20,5 @@ export type Disease ={
 
 export type Prediction = {
   disease: Disease;
-  confidence: number;
+  probability: number;
 }

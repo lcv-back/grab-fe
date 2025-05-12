@@ -1,7 +1,7 @@
 import { X, Plus } from "lucide-react";
 import dynamic from 'next/dynamic';
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
-import type { Symptom } from "@/types";
+import type { Symptom, Prediction } from "@/types";
 import axios from 'axios';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
@@ -12,7 +12,7 @@ interface Props {
   image: File | null;
   setImage: (img: File | null) => void;
   token: string;
-  onReceiveTopNames: (topNames: string[], predictions: any[]) => void;
+  onReceiveTopNames: (topNames: string[], predictions: Prediction[]) => void;
   onBack: () => void;
 }
 
@@ -39,8 +39,14 @@ export default function SymptomForm({
           Authorization: `Bearer ${token}`
         }
       });
+
       const { top_names, predicted_diseases } = res.data;
-      onReceiveTopNames(top_names, predicted_diseases);
+      const convertedPredictions: Prediction[] = predicted_diseases.map((d: { name: string; probability: number }) => ({
+        disease: { name: d.name },
+        probability: d.probability,
+      }));
+
+      onReceiveTopNames(top_names, convertedPredictions);
     } catch (err) {
       console.error("Prediction request failed", err);
     }

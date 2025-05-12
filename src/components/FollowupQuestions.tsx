@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+
 
 interface FollowupQuestionsProps {
   symptoms: string[];
@@ -21,7 +21,7 @@ export default function FollowupQuestions({
 
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
-      <h3 className="text-lg text-gray-600 font-semibold mb-4">Please confirm if you're experiencing any of the following symptoms:</h3>
+      <h3 className="text-lg text-gray-600 font-semibold mb-4">Please confirm if you&apos;re experiencing any of the following symptoms:</h3>
       <div className="space-y-4">
         {symptoms.map((symptom) => (
           <div key={symptom} className="flex justify-between items-center border p-3 rounded-lg">

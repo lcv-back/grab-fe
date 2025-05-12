@@ -7,7 +7,6 @@ import SymptomForm from "@/components/SymptomForm";
 import FollowupQuestions from "@/components/FollowupQuestions";
 import DiagnosisResult from "@/components/DiagnosisResult";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 import type { Symptom, Prediction } from "@/types";
 
 export default function SymptomsPage() {
@@ -15,7 +14,6 @@ export default function SymptomsPage() {
   const [image, setImage] = useState<File | null>(null);
   const [token, setToken] = useState("");
   const { user, loading } = useAuth();
-  const router = useRouter();
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
@@ -29,7 +27,7 @@ export default function SymptomsPage() {
   useEffect(() => {
     const savedToken = localStorage.getItem("access_token");
     if (savedToken) setToken(savedToken);
-  }, [loading, user, router]);
+  }, [loading, user]);
 
   const handleReceiveTopNames = (topNames: string[], predicted: Prediction[]) => {
     setFollowUpSymptoms(topNames);
@@ -40,12 +38,15 @@ export default function SymptomsPage() {
   const handleFinalSubmit = async () => {
     try {
       const yesSymptoms = Object.entries(followUpAnswers)
-        .filter(([_, ans]) => ans === 'yes')
+        .filter(([, ans]) => ans === 'yes')
         .map(([key]) => key);
 
-      const res = await fetch('/api/predict', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           user_id: "1",
           symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],

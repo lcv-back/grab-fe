@@ -18,7 +18,7 @@ export default function DiagnosisResult({ predictions, onReset, onBack }: Diagno
             <details>
               <summary className="flex justify-between items-center cursor-pointer">
                 <span className="font-medium text-[#005a74]">{p.disease.name}</span>
-                <span className="text-sm text-gray-600">{p.confidence}% match</span>
+                <span className="text-sm text-gray-600">{p.probability}% match</span>
               </summary>
               {p.disease.description && (
                 <div

@@ -4,8 +4,6 @@ import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import type { Symptom, Prediction } from "@/types";
 import axios from 'axios';
 import { useState } from 'react';
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
-import animationData from '@/data/doctor-note.json';
 
 interface Props {
   symptoms: Symptom[];

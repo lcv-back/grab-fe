@@ -1,5 +1,4 @@
 import { X, Plus } from "lucide-react";
-import dynamic from 'next/dynamic';
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import type { Symptom, Prediction } from "@/types";
 import axios from 'axios';

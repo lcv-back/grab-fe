@@ -44,6 +44,7 @@ export default function DiagnosisResult({ predictions, onReset, onBack }: Diagno
         setTimeout(() => scrollToContent(index), 200);
       }, 10);
     } catch (error) {
+      console.error("Error fetching disease description:", error);
       setDiseaseDescriptions(prev => ({ ...prev, [index]: "**Error loading description.**" }));
       setTimeout(() => {
         setExpandedIndex(index);

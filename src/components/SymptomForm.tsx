@@ -27,16 +27,6 @@ export default function SymptomForm({
 }: Props) {
   const [uploadedUrl, setUploadedUrl] = useState<string>("");
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
-
-  // const convertHeicToJpeg = async (file: File): Promise<File> => {
-  // if (file.name.toLowerCase().endsWith('.heic')) {
-  //   const heic2any = (await import('heic2any')).default;
-  //   const convertedBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
-  //   return new File([convertedBlob as BlobPart], file.name.replace(/\\.heic$/, '.jpg'), { type: 'image/jpeg' });
-  // }
-  // return file;
-  // };
-
   const handleUploadImage = async (file: File) => {
     setUploadStatus("uploading");
     try {

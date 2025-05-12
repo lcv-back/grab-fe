@@ -19,6 +19,7 @@ export default function SymptomsPage() {
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
   const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, 'yes' | 'no'>>({});
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
@@ -30,6 +31,10 @@ export default function SymptomsPage() {
   }, [loading, user]);
 
   const handleReceiveTopNames = (topNames: string[], predicted: Prediction[]) => {
+    if (!Array.isArray(topNames) || topNames.length === 0) {
+      alert("No follow-up symptoms received. Please try again later.");
+      return;
+    }
     setFollowUpSymptoms(topNames);
     setPredictions(predicted);
     setStep('follow-ups');
@@ -37,11 +42,12 @@ export default function SymptomsPage() {
 
   const handleFinalSubmit = async () => {
     try {
+      setIsLoading(true);
       const yesSymptoms = Object.entries(followUpAnswers)
         .filter(([, ans]) => ans === 'yes')
         .map(([key]) => key);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
+      const res = await fetch('/api/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,11 +61,24 @@ export default function SymptomsPage() {
           answers: followUpAnswers
         })
       });
+
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
-      setPredictions(data.predicted_diseases);
+
+      if (!Array.isArray(data.predicted_diseases) || data.predicted_diseases.length === 0) {
+        alert("No predictions received. Please try again later.");
+        return;
+      }
+      const converted = data.predicted_diseases.map((d: { name: string; probability: number }) => ({
+        disease: { name: d.name },
+        probability: d.probability,
+      }));
+      setPredictions(converted);
       setStep('result');
     } catch (err) {
       console.error('Final prediction request failed:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,6 +97,8 @@ export default function SymptomsPage() {
       <ProgressBar current={step} />
 
       <div className="max-w-6xl mx-auto px-4 py-10">
+        {isLoading && <p className="text-center text-sm text-gray-500 mb-4">Loading...</p>}
+
         {step === 'introduction' && (
           <Introduction
             onNext={() => setStep('symptoms')}

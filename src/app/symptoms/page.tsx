@@ -10,15 +10,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import type { Symptom, Prediction } from "@/types";
 
-const mockFollowUpSymptoms = ['Headache', 'Nausea', 'Shortness of breath'];
-const mockPredictions: Prediction[] = [
-  { disease: { name: "A53 diffuse large b-cell lymphoma", description: "### Comprehensive Overview of ..." }, confidence: 92 },
-  { disease: { name: "COVID-19" }, confidence: 85 },
-  { disease: { name: "Common Cold" }, confidence: 76 },
-  { disease: { name: "Allergy" }, confidence: 65 },
-  { disease: { name: "Bronchitis" }, confidence: 50 }
-];
-
 export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [image, setImage] = useState<File | null>(null);
@@ -28,8 +19,8 @@ export default function SymptomsPage() {
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
-  const [currentQ, setCurrentQ] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, 'yes' | 'no'>>({});
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
@@ -40,38 +31,43 @@ export default function SymptomsPage() {
     if (savedToken) setToken(savedToken);
   }, [loading, user, router]);
 
-  const handleCheck = () => {
-    const userInputNames = symptoms.map((s) => s.name.toLowerCase());
-    const filtered = mockFollowUpSymptoms.filter((sym) => !userInputNames.includes(sym.toLowerCase())).slice(0, 3);
-    setFollowUpSymptoms(filtered);
-    setCurrentQ(0);
+  const handleReceiveTopNames = (topNames: string[], predicted: Prediction[]) => {
+    setFollowUpSymptoms(topNames);
+    setPredictions(predicted);
     setStep('follow-ups');
   };
 
-  const handleAnswer = (ans: string) => {
-    const updated = [...answers];
-    updated[currentQ] = ans;
-    setAnswers(updated);
-    if (currentQ < followUpSymptoms.length - 1) {
-      setCurrentQ(currentQ + 1);
-    } else {
-      setStep('result');
-    }
-  };
+  const handleFinalSubmit = async () => {
+    try {
+      const yesSymptoms = Object.entries(followUpAnswers)
+        .filter(([_, ans]) => ans === 'yes')
+        .map(([key]) => key);
 
-  const handleBack = () => {
-    if (currentQ > 0) {
-      setCurrentQ(currentQ - 1);
-    } else {
-      setStep('symptoms');
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: "1",
+          symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],
+          image_paths: image ? [URL.createObjectURL(image)] : [],
+          num_data: 5,
+          answers: followUpAnswers
+        })
+      });
+      const data = await res.json();
+      setPredictions(data.predicted_diseases);
+      setStep('result');
+    } catch (err) {
+      console.error('Final prediction request failed:', err);
     }
   };
 
   const handleReset = () => {
     setSymptoms([]);
     setImage(null);
-    setAnswers([]);
+    setFollowUpAnswers({});
     setFollowUpSymptoms([]);
+    setPredictions([]);
     setStep('symptoms');
   };
 
@@ -100,23 +96,24 @@ export default function SymptomsPage() {
             image={image}
             setImage={setImage}
             token={token}
-            onSubmit={handleCheck}
+            onReceiveTopNames={handleReceiveTopNames}
             onBack={() => setStep('introduction')}
           />
         )}
 
         {step === 'follow-ups' && (
           <FollowupQuestions
-            question={followUpSymptoms[currentQ]}
-            currentQ={currentQ}
-            onAnswer={handleAnswer}
-            onBack={handleBack}
+            symptoms={followUpSymptoms}
+            answers={followUpAnswers}
+            setAnswers={setFollowUpAnswers}
+            onNext={handleFinalSubmit}
+            onBack={() => setStep('symptoms')}
           />
         )}
 
         {step === 'result' && (
           <DiagnosisResult
-            predictions={mockPredictions}
+            predictions={predictions}
             onReset={handleReset}
             onBack={() => setStep('follow-ups')}
           />

@@ -1,7 +1,10 @@
 import { X, Plus } from "lucide-react";
+import dynamic from 'next/dynamic';
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import type { Symptom } from "@/types";
-
+import axios from 'axios';
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+import animationData from '@/data/doctor-note.json';
 
 interface Props {
   symptoms: Symptom[];
@@ -9,7 +12,7 @@ interface Props {
   image: File | null;
   setImage: (img: File | null) => void;
   token: string;
-  onSubmit: () => void;
+  onReceiveTopNames: (topNames: string[], predictions: any[]) => void;
   onBack: () => void;
 }
 
@@ -19,11 +22,33 @@ export default function SymptomForm({
   image,
   setImage,
   token,
-  onSubmit,
+  onReceiveTopNames,
   onBack
 }: Props) {
+  const handleSubmit = async () => {
+    try {
+      const imageUrl = image ? URL.createObjectURL(image) : ""; // Placeholder for actual uploaded path
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
+        user_id: "1",
+        symptoms: symptoms.map(s => s.name),
+        image_paths: image ? [imageUrl] : [],
+        num_data: 5,
+        answers: {}
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const { top_names, predicted_diseases } = res.data;
+      onReceiveTopNames(top_names, predicted_diseases);
+    } catch (err) {
+      console.error("Prediction request failed", err);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
+    <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
+      <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6">
         <div>
           <h2 className="text-lg md:text-xl font-bold text-[#005a74] mb-2">Enter your symptoms</h2>
           <AutocompleteSymptomInput symptoms={symptoms} setSymptoms={setSymptoms} token={token} />
@@ -69,10 +94,15 @@ export default function SymptomForm({
 
         <div className="flex justify-between items-center pt-2">
           <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button>
-          <button onClick={onSubmit} className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm transition">
+          <button onClick={handleSubmit} className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm transition">
             Check
           </button>
         </div>
       </div>
+
+      <div className="w-full max-w-[240px] sm:max-w-sm md:max-w-md">
+        <Lottie animationData={animationData} loop />
+      </div>
+    </div>
   );
 }

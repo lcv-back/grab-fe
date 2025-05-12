@@ -47,7 +47,7 @@ export default function SymptomsPage() {
         .filter(([, ans]) => ans === 'yes')
         .map(([key]) => key);
 
-      const res = await fetch('/api/predict', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

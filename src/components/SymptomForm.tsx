@@ -36,7 +36,7 @@ export default function SymptomForm({
       formData.append("file", file);
 
       const res = await axios.post(
-        "/api/symptoms/upload",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/upload`,
         formData,
         {
           headers: {
@@ -62,7 +62,7 @@ export default function SymptomForm({
   const handleSubmit = async () => {
     try {
       const res = await axios.post(
-        '/api/predict',
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`,
         {
           user_id: "1",
           symptoms: symptoms.map(s => s.name),

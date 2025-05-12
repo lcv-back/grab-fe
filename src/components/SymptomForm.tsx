@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import type { Symptom, Prediction } from "@/types";
 import axios from 'axios';
+import { useState } from 'react';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import animationData from '@/data/doctor-note.json';
 
@@ -25,20 +26,56 @@ export default function SymptomForm({
   onReceiveTopNames,
   onBack
 }: Props) {
+  const [uploadedUrl, setUploadedUrl] = useState<string>("");
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+
+  const handleUploadImage = async (file: File) => {
+    setUploadStatus("uploading");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await axios.post(
+        "/api/symptoms/upload",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.data?.url) {
+        setUploadedUrl(res.data.url);
+        setImage(file);
+        setUploadStatus("success");
+      } else {
+        setUploadStatus("error");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      setUploadStatus("error");
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      const imageUrl = image ? URL.createObjectURL(image) : ""; // Placeholder for actual uploaded path
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
-        user_id: "1",
-        symptoms: symptoms.map(s => s.name),
-        image_paths: image ? [imageUrl] : [],
-        num_data: 5,
-        answers: {}
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        '/api/predict',
+        {
+          user_id: "1",
+          symptoms: symptoms.map(s => s.name),
+          image_paths: uploadedUrl ? [uploadedUrl] : [],
+          num_data: 5,
+          answers: {}
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
 
       const { top_names, predicted_diseases } = res.data;
       const convertedPredictions: Prediction[] = predicted_diseases.map((d: { name: string; probability: number }) => ({
@@ -83,19 +120,27 @@ export default function SymptomForm({
 
         <div>
           <p className="text-sm font-medium text-[#005a74] mb-2">Upload an image (optional):</p>
-          {image ? (
-            <div className="relative w-20 h-20">
-              <img src={URL.createObjectURL(image)} alt="Preview" className="w-full h-full object-cover rounded-xl border" />
-              <button onClick={() => setImage(null)} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
-                <X size={12} />
-              </button>
-            </div>
-          ) : (
-            <label className="cursor-pointer w-20 h-20 rounded-xl border-2 border-dashed border-[#00BDF9] flex items-center justify-center hover:bg-blue-50">
-              <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] || null)} hidden />
-              <Plus className="text-[#00BDF9]" />
-            </label>
-          )}
+          <div className="flex items-center gap-4">
+            {image ? (
+              <div className="relative w-20 h-20">
+                <img src={URL.createObjectURL(image)} alt="Preview" className="w-full h-full object-cover rounded-xl border" />
+                <button onClick={() => { setImage(null); setUploadedUrl(""); setUploadStatus("idle"); }} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <label className="cursor-pointer w-20 h-20 rounded-xl border-2 border-dashed border-[#00BDF9] flex items-center justify-center hover:bg-blue-50">
+                <input type="file" accept="image/*" onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUploadImage(file);
+                }} hidden />
+                <Plus className="text-[#00BDF9]" />
+              </label>
+            )}
+            {uploadStatus === "uploading" && <span className="text-sm text-gray-500 animate-pulse">Uploading...</span>}
+            {uploadStatus === "success" && <span className="text-sm text-green-600">Uploaded ✅</span>}
+            {uploadStatus === "error" && <span className="text-sm text-red-600">Upload failed ❌</span>}
+          </div>
         </div>
 
         <div className="flex justify-between items-center pt-2">

@@ -54,7 +54,7 @@ export default function SymptomsPage() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          user_id: "1",
+          user_id: user?.id || "1",
           symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],
           image_paths: image ? [URL.createObjectURL(image)] : [],
           num_data: 5,
@@ -114,6 +114,7 @@ export default function SymptomsPage() {
         {step === 'symptoms' && (
           <SymptomForm
             symptoms={symptoms}
+            user = {user!}
             setSymptoms={setSymptoms}
             image={image}
             setImage={setImage}

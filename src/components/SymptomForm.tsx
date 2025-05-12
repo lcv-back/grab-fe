@@ -1,11 +1,12 @@
 import { X, Plus } from "lucide-react";
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
-import type { Symptom, Prediction } from "@/types";
+import type { Symptom, Prediction, User } from "@/types";
 import axios from 'axios';
 import { useState } from 'react';
 
 interface Props {
   symptoms: Symptom[];
+  user: User;
   setSymptoms: (s: Symptom[]) => void;
   image: File | null;
   setImage: (img: File | null) => void;
@@ -16,6 +17,7 @@ interface Props {
 
 export default function SymptomForm({
   symptoms,
+  user,
   setSymptoms,
   image,
   setImage,
@@ -26,9 +28,19 @@ export default function SymptomForm({
   const [uploadedUrl, setUploadedUrl] = useState<string>("");
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
 
+  // const convertHeicToJpeg = async (file: File): Promise<File> => {
+  // if (file.name.toLowerCase().endsWith('.heic')) {
+  //   const heic2any = (await import('heic2any')).default;
+  //   const convertedBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+  //   return new File([convertedBlob as BlobPart], file.name.replace(/\\.heic$/, '.jpg'), { type: 'image/jpeg' });
+  // }
+  // return file;
+  // };
+
   const handleUploadImage = async (file: File) => {
     setUploadStatus("uploading");
     try {
+      // const file = await convertHeicToJpeg(rawFile);
       const formData = new FormData();
       formData.append("file", file);
 
@@ -56,12 +68,31 @@ export default function SymptomForm({
     }
   };
 
+  const handleDeleteImage = async () => {
+    if (!uploadedUrl) return;
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/images/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        data: { url: uploadedUrl }
+      });
+    } catch (error) {
+      console.error("Image delete error:", error);
+    } finally {
+      setImage(null);
+      setUploadedUrl("");
+      setUploadStatus("idle");
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`,
         {
-          user_id: "1",
+          user_id: user?.id || "1",
           symptoms: symptoms.map(s => s.name),
           image_paths: uploadedUrl ? [uploadedUrl] : [],
           num_data: 5,
@@ -120,7 +151,7 @@ export default function SymptomForm({
             {image ? (
               <div className="relative w-20 h-20">
                 <img src={URL.createObjectURL(image)} alt="Preview" className="w-full h-full object-cover rounded-xl border" />
-                <button onClick={() => { setImage(null); setUploadedUrl(""); setUploadStatus("idle"); }} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
+                <button onClick={handleDeleteImage} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
                   <X size={12} />
                 </button>
               </div>
@@ -141,7 +172,11 @@ export default function SymptomForm({
 
         <div className="flex justify-between items-center pt-2">
           <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button>
-          <button onClick={handleSubmit} className="bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full font-semibold text-sm transition">
+          <button
+            onClick={handleSubmit}
+            disabled={uploadStatus === 'uploading'}
+            className={`px-6 py-2 rounded-full text-sm font-semibold transition ${uploadStatus === 'uploading' ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#00BDF9] hover:bg-[#00acd6] text-white'}`}
+          >
             Check
           </button>
         </div>

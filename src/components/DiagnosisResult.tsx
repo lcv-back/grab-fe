@@ -137,7 +137,7 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms }: 
               ))}
             </ul>
           )}
-          <p className="text-sm font-semibold">Disclaimer: This information is provided for reference purposes only. For medical consultation or check-ups, please contact the hospital directly.</p>
+          <p className="text-black text-sm font-semibold">Disclaimer: This information is provided for reference purposes only. For medical consultation or check-ups, please contact the hospital directly.</p>
         </div>
 
         <div className="flex justify-between pt-4">

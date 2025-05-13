@@ -188,6 +188,12 @@ export default function SymptomsPage() {
             predictions={predictions}
             onReset={handleReset}
             // onBack={() => setStep('follow-ups')}
+            userSymptoms={[
+              ...symptoms.map(s => s.name),
+              ...Object.entries(followUpAnswers)
+                .filter(([, v]) => v === 'Yes')
+                .map(([k]) => k)
+            ]}
           />
         )}
       </div>

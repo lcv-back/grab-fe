@@ -8,15 +8,22 @@ import { Prediction } from "@/types";
 interface DiagnosisResultProps {
   predictions: Prediction[];
   onReset: () => void;
-  // onBack: () => void;
+  userSymptoms: string[];
 }
 
-export default function DiagnosisResult({ predictions, onReset }: DiagnosisResultProps) {
+export default function DiagnosisResult({ predictions, onReset, userSymptoms }: DiagnosisResultProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [diseaseDescriptions, setDiseaseDescriptions] = useState<Record<number, string>>({});
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [readMoreIndex, setReadMoreIndex] = useState<number | null>(null);
+
+  const [showHospitalModal, setShowHospitalModal] = useState(false);
+  const [hospitalData, setHospitalData] = useState<any[]>([]);
+  const [isLoadingHospitals, setIsLoadingHospitals] = useState(false);
+
+  const [confirmResetModal, setConfirmResetModal] = useState(false);
+
 
   useEffect(() => {
     if (activeIndex !== null) {
@@ -59,6 +66,43 @@ export default function DiagnosisResult({ predictions, onReset }: DiagnosisResul
     setReadMoreIndex(null);
   };
 
+  const handleShowNearbyHospitals = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+
+      try {
+        setIsLoadingHospitals(true);
+        setShowHospitalModal(true);
+
+        const token = localStorage.getItem("access_token");
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/hospitals/nearest`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ latitude, longitude }),
+        });
+
+        const data = await res.json();
+        setHospitalData(data.hospitals || []);
+      } catch (err) {
+        console.error("Failed to fetch hospital data:", err);
+      } finally {
+        setIsLoadingHospitals(false);
+      }
+    }, (err) => {
+      alert("Permission denied or failed to get location.");
+      console.error("Geolocation error:", err);
+    });
+  };
+
   return (
     <>
       <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
@@ -82,17 +126,94 @@ export default function DiagnosisResult({ predictions, onReset }: DiagnosisResul
           ))}
         </ul>
 
-        <div className="flex justify-end pt-4">
-          {/* <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button> */}
-          <button
-            onClick={onReset}
-            className="px-6 py-2 bg-[#00BDF9] hover:bg-[#00acd6] text-white rounded-full font-semibold"
+        <div className="flex flex-col gap-2 mt-4">
+          <h3 className="text-lg font-semibold text-[#005a74]">Your Reported Symptoms</h3>
+          {userSymptoms.length === 0 ? (
+            <p className="text-sm text-gray-500 italic">No symptoms provided.</p>
+          ) : (
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+              {userSymptoms.map((s, idx) => (
+                <li key={idx}>{s}</li>
+              ))}
+            </ul>
+          )}
+          <p className="text-sm font-semibold">Disclaimer: This information is provided for reference purposes only. For medical consultation or check-ups, please contact the hospital directly.</p>
+        </div>
+
+        <div className="flex justify-between pt-4">
+          <h1
+            onClick={handleShowNearbyHospitals}
+            className="py-2 hover:cursor-pointer text-[#00BDF9] rounded-full font-semibold text-sm"
           >
-            OK
+            View nearby hospitals
+          </h1>
+          <button
+            onClick={() => setConfirmResetModal(true)}
+            className="px-6 py-2 bg-[#00BDF9] hover:bg-[#00acd6] text-white rounded-full font-semibold text-sm"
+          >
+            Restart
           </button>
         </div>
       </div>
 
+      {/* MODAL: Nearby Hospitals */}
+      {showHospitalModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => setShowHospitalModal(false)}
+        >
+          <div
+            className="relative bg-white rounded-3xl max-w-3xl w-full shadow-2xl transform transition-all duration-300 ease-out overflow-hidden animate-fadeIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* HEADER FIXED */}
+            <div className="flex justify-between items-start gap-4 mb-4 px-6 pt-6 sticky top-0 bg-white z-10">
+              <h3 className="text-2xl font-bold text-[#005a74] leading-snug">
+                Nearby Hospitals
+              </h3>
+              <button
+                onClick={() => setShowHospitalModal(false)}
+                className="text-white bg-[#00BDF9] hover:bg-[#00acd6] rounded-full p-2 shadow-lg"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* CONTENT SCROLLABLE */}
+            <div className="max-h-[75vh] overflow-y-auto px-6 pb-6 rounded-b-3xl scrollbar-thin scrollbar-thumb-[#00BDF9]/50 scrollbar-track-transparent custom-scrollbar">
+              {isLoadingHospitals ? (
+                <div className="flex items-center gap-2 text-sm italic text-gray-400">
+                  <Loader2 className="w-4 h-4 animate-spin text-[#00BDF9]" />
+                  Loading hospitals...
+                </div>
+              ) : hospitalData.length === 0 ? (
+                <p className="text-sm text-gray-500">No hospitals found nearby.</p>
+              ) : (
+                hospitalData.map((h, idx) => (
+                  <div key={idx} className="border border-gray-200 rounded-xl p-4 mb-4">
+                    <h4 className="font-semibold text-[#005a74]">{h.name}</h4>
+                    <p className="text-sm text-gray-600">{h.address}</p>
+                    <p className="text-sm text-gray-500">📍 {h.distance_km?.toFixed(1)} km — ⏰ {h.opening_hours}</p>
+                    <div className="flex justify-between items-center mt-2 text-sm">
+                      <a href={h.website} target="_blank" className="text-[#00BDF9] hover:underline">Visit website</a>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(h.phone)}
+                        className="text-gray-500 hover:text-[#00BDF9]"
+                      >
+                        📞 Copy phone
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* MODAL: Disease Description */}
       {activeIndex !== null && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm transition-opacity duration-300"
@@ -155,6 +276,41 @@ export default function DiagnosisResult({ predictions, onReset }: DiagnosisResul
           </div>
         </div>
       )}
+
+      {confirmResetModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm"
+          onClick={() => setConfirmResetModal(false)}
+        >
+          <div
+            className="relative bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold text-[#005a74] mb-3">Restart test?</h3>
+            <p className="text-sm text-gray-600 mb-5">
+              All your answers and results will be lost. Are you sure you want to restart the assessment?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmResetModal(false)}
+                className="px-4 py-1.5 rounded-full border text-sm text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setConfirmResetModal(false);
+                  onReset();
+                }}
+                className="px-5 py-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-sm font-semibold"
+              >
+                Yes, restart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }

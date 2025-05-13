@@ -14,10 +14,11 @@ export default function SymptomsPage() {
   const [image, setImage] = useState<File | null>(null);
   const [token, setToken] = useState("");
   const { user, loading } = useAuth();
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
-  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, 'yes' | 'no'>>({});
+  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, boolean>>({});
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,6 +31,10 @@ export default function SymptomsPage() {
     if (savedToken) setToken(savedToken);
   }, [loading, user]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
   const handleReceiveTopNames = (topNames: string[], predicted: Prediction[]) => {
     if (!Array.isArray(topNames) || topNames.length === 0) {
       alert("No follow-up symptoms received. Please try again later.");
@@ -40,11 +45,17 @@ export default function SymptomsPage() {
     setStep('follow-ups');
   };
 
-  const handleFinalSubmit = async () => {
+  const handleFinalSubmit = async (formattedAnswers: Record<string, 'Yes' | 'No'>) => {
+    if (symptoms.length === 0 && !uploadedUrl) {
+      alert("Please provide at least one symptom or upload an image before submitting.");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const yesSymptoms = Object.entries(followUpAnswers)
-        .filter(([, ans]) => ans === 'yes')
+
+      const yesSymptoms = Object.entries(formattedAnswers)
+        .filter(([, ans]) => ans === 'Yes')
         .map(([key]) => key);
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`, {
@@ -56,9 +67,9 @@ export default function SymptomsPage() {
         body: JSON.stringify({
           user_id: user?.id || "1",
           symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],
-          image_paths: image ? [URL.createObjectURL(image)] : [],
+          image_paths: uploadedUrl ? [uploadedUrl] : [],
           num_data: 5,
-          answers: followUpAnswers
+          answers: formattedAnswers
         })
       });
 
@@ -69,10 +80,12 @@ export default function SymptomsPage() {
         alert("No predictions received. Please try again later.");
         return;
       }
+
       const converted = data.predicted_diseases.map((d: { name: string; probability: number }) => ({
         disease: { name: d.name },
         probability: d.probability,
       }));
+
       setPredictions(converted);
       setStep('result');
     } catch (err) {
@@ -85,6 +98,7 @@ export default function SymptomsPage() {
   const handleReset = () => {
     setSymptoms([]);
     setImage(null);
+    setUploadedUrl(null);
     setFollowUpAnswers({});
     setFollowUpSymptoms([]);
     setPredictions([]);
@@ -96,7 +110,7 @@ export default function SymptomsPage() {
       <Header />
       <ProgressBar current={step} />
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10">
         {isLoading && <p className="text-center text-sm text-gray-500 mb-4">Loading...</p>}
 
         {step === 'introduction' && (
@@ -114,10 +128,12 @@ export default function SymptomsPage() {
         {step === 'symptoms' && (
           <SymptomForm
             symptoms={symptoms}
-            user = {user!}
+            user={user!}
             setSymptoms={setSymptoms}
             image={image}
             setImage={setImage}
+            setUploadedUrl={setUploadedUrl}
+            uploadedUrl={uploadedUrl!}
             token={token}
             onReceiveTopNames={handleReceiveTopNames}
             onBack={() => setStep('introduction')}
@@ -129,7 +145,7 @@ export default function SymptomsPage() {
             symptoms={followUpSymptoms}
             answers={followUpAnswers}
             setAnswers={setFollowUpAnswers}
-            onNext={handleFinalSubmit}
+            onNext={(formattedAnswers) => handleFinalSubmit(formattedAnswers)}
             onBack={() => setStep('symptoms')}
           />
         )}

@@ -94,16 +94,20 @@ export default function AutocompleteSymptomInput({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter symptom..."
-        className="w-full border rounded-full px-4 py-2 outline-none text-sm text-gray-600"
+        placeholder="Search, e.g., headache, fever..."
+        className="w-full border rounded-full px-4 py-2 outline-none text-base text-gray-600 transition-all duration-200  hover:border-[#00BDF9]
+             focus:ring-2 focus:ring-[#00BDF9] focus:border-[#00BDF9] 
+             hover:ring-1 hover:ring-[#00BDF9]"
       />
       {suggestions.length > 0 && (
-        <div className="absolute bg-white shadow rounded w-full z-10 max-h-60 overflow-auto">
+        <div className="absolute mt-1 w-full max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-xl shadow-lg">
           {suggestions.map((sug, index) => (
             <div
               key={sug.id === -1 ? `free-text-${sug.name}` : sug.id}
-              className={`px-4 py-2 cursor-pointer text-gray-600 ${
-                selectedIndex === index ? "bg-gray-200" : ""
+              className={`px-4 py-2 text-base cursor-pointer transition-colors duration-150 ${
+                selectedIndex === index
+                  ? "bg-[#00BDF9]/10 text-[#005a74]"
+                  : "hover:bg-[#00BDF9]/5 hover:text-[#005a74] text-gray-600"
               }`}
               onClick={() => selectSymptom(sug)}
             >
@@ -112,6 +116,7 @@ export default function AutocompleteSymptomInput({
           ))}
         </div>
       )}
+
     </div>
   );
 }

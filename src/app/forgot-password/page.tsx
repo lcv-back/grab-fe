@@ -48,9 +48,9 @@ export default function ForgotPasswordPage() {
 
         <h2 className="text-xl font-semibold text-[#005a74] mb-4 text-center">Forgot Password</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm text-left">
+        <form onSubmit={handleSubmit} className="space-y-4 text-base text-left">
           <label className="block text-gray-600 mb-1">Email</label>
-          <div className="flex items-center border rounded-lg px-3 py-2">
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-[#00BDF9] transition">
             <Mail size={16} className="text-gray-600 mr-2" />
             <input
               name="email"
@@ -58,7 +58,8 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full bg-transparent outline-none text-gray-600"
+              autoComplete="email"
+              className="w-full bg-transparent outline-none text-base text-gray-700 placeholder-gray-400"
             />
           </div>
 

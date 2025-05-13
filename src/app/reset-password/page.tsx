@@ -67,6 +67,7 @@ function ResetPasswordForm() {
       </div>
 
       <h2 className="text-xl font-bold text-[#005a74] mb-4">Reset Your Password</h2>
+
       {success ? (
         <div className="flex flex-col items-center text-green-600">
           <CheckCircle size={48} className="mb-2" />
@@ -74,36 +75,47 @@ function ResetPasswordForm() {
           <p className="text-sm mt-1">You will be redirected to login shortly...</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4 text-left">
-          <label className="block text-sm text-gray-700">New Password</label>
-          <div className="flex items-center border rounded-lg px-3 py-2">
-            <Lock size={16} className="text-gray-600 mr-2" />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 outline-none text-sm text-gray-600"
-              placeholder="Enter new password"
-              required
-            />
+        <form onSubmit={handleSubmit} className="space-y-4 text-base text-left">
+          <div>
+            <label className="block text-gray-600 mb-1">New Password</label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-[#00BDF9] transition">
+              <Lock size={16} className="text-gray-600 mr-2" />
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-transparent outline-none text-base text-gray-700 placeholder-gray-400"
+                placeholder="Enter new password"
+                required
+              />
+            </div>
           </div>
-          <label className="block text-sm text-gray-700">Confirm Password</label>
-          <div className="flex items-center border rounded-lg px-3 py-2">
-            <Lock size={16} className="text-gray-400 mr-2" />
-            <input
-              type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              className="flex-1 outline-none text-sm"
-              placeholder="Re-enter new password"
-              required
-            />
+
+          <div>
+            <label className="block text-gray-600 mb-1">Confirm Password</label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-[#00BDF9] transition">
+              <Lock size={16} className="text-gray-600 mr-2" />
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                className="w-full bg-transparent outline-none text-base text-gray-700 placeholder-gray-400"
+                placeholder="Re-enter new password"
+                required
+              />
+            </div>
           </div>
+
           {error && <p className="text-red-500 text-sm">{error}</p>}
+
           <button
             type="submit"
-            className="w-full flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white font-semibold py-2 rounded-lg transition-all"
             disabled={loading}
+            className={`w-full flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold transition-colors ${
+              loading ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
             {loading ? (
               <>

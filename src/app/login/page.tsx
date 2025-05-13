@@ -47,35 +47,37 @@ export default function LoginPage() {
   return (
     <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white px-4 py-8">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-8">
-        <div className="flex justify-center mb-6">
+        <Link className="flex justify-center mb-6" href={'/'}>
           <Image src="/assets/logo.png" alt="iSymptom Logo" width={140} height={40} />
-        </div>
+        </Link>
 
         <h2 className="text-xl font-semibold text-[#005a74] mb-4 text-center">Sign In</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+        <form onSubmit={handleSubmit} className="space-y-4 text-base">
           <div>
             <label className="block text-gray-600 mb-1">Email</label>
-            <div className="flex items-center border rounded-lg px-3 py-2">
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-[#00BDF9] transition">
               <Mail size={16} className="text-gray-600 mr-2" />
               <input
                 name="email"
                 type="email"
                 placeholder="abc@gmail.com"
-                className="w-full bg-transparent outline-none text-gray-600"
+                autoComplete="email"
+                className="w-full bg-transparent outline-none text-base text-gray-700 placeholder-gray-400"
               />
             </div>
           </div>
 
           <div>
             <label className="block text-gray-600 mb-1">Password</label>
-            <div className="flex items-center border rounded-lg px-3 py-2">
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-[#00BDF9] transition">
               <Lock size={16} className="text-gray-600 mr-2" />
               <input
                 name="password"
                 type="password"
                 placeholder="**************"
-                className="w-full bg-transparent outline-none text-gray-600"
+                autoComplete="current-password"
+                className="w-full bg-transparent outline-none text-base text-gray-700 placeholder-gray-400"
               />
             </div>
           </div>

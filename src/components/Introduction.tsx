@@ -85,7 +85,7 @@ export default function Introduction({
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
+    <div className="max-w-6xl mx-auto px-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-5">
       <div className="flex-1 space-y-6">
         <div>
           <h1 className="text-lg md:text-xl font-bold text-[#005a74] mb-4">Check your symptoms</h1>
@@ -98,24 +98,6 @@ export default function Introduction({
             <li>Description of each disease you&apos;re might having.</li>
           </ul>
         </div>
-
-        {/* <div className="pt-4">
-          <h2 className="font-semibold text-[#005a74] text-base mb-2">About this symptom checker</h2>
-          <ul className="space-y-2 text-sm text-[#1e1e1e]">
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600">✔</span>
-              Created and validated by doctors
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600">✔</span>
-              Clinically validated with real patient cases
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600">✔</span>
-              Class I medical device in European Union
-            </li>
-          </ul>
-        </div> */}
 
         <button
           onClick={() => setShowTerms(true)}

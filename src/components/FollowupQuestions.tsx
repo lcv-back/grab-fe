@@ -40,20 +40,28 @@ export default function FollowupQuestions({
       </h3>
 
       <div className="space-y-3">
-        {symptoms.map((symptom) => (
-          <label
-            key={symptom}
-            className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer transition-colors duration-150 hover:bg-[#00BDF9]/5"
-          >
-            <input
-              type="checkbox"
-              checked={!!answers[symptom]}
-              onChange={() => toggleCheckbox(symptom)}
-              className="w-5 h-5 accent-[#00BDF9] border-gray-300 rounded focus:ring-2 focus:ring-[#00BDF9] focus:outline-none transition"
-            />
-            <span className="text-sm font-medium text-[#005a74]">{symptom}</span>
-          </label>
-        ))}
+        {symptoms.map((symptom) => {
+          const isChecked = !!answers[symptom];
+
+          return (
+            <label
+              key={symptom}
+              onClick={() => toggleCheckbox(symptom)}
+              className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all duration-300 border-2
+                ${isChecked ? 'bg-[#00BDF9] text-white border-[#00BDF9]' : 'bg-white text-[#005a74] border-[#D1D5DB] hover:bg-[#f0faff]'}`}
+            >
+              <div
+                className={`w-5 h-5 flex items-center justify-center rounded-full border transition-all duration-300
+                  ${isChecked ? 'bg-white border-white' : 'border-gray-300'}`}
+              >
+                {isChecked && (
+                  <span className="text-[#00BDF9] text-[14px] font-bold leading-none">✔</span>
+                )}
+              </div>
+              <span className="text-sm font-semibold">{symptom}</span>
+            </label>
+          );
+        })}
       </div>
 
       <div className="flex justify-between pt-6">

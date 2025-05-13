@@ -18,9 +18,10 @@ export default function SymptomsPage() {
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
-  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, boolean>>({});
+  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, 'Yes' | 'No'>>({});
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [followUpCount, setFollowUpCount] = useState(0);
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
@@ -42,6 +43,7 @@ export default function SymptomsPage() {
     }
     setFollowUpSymptoms(topNames);
     setPredictions(predicted);
+    setFollowUpCount(1);
     setStep('follow-ups');
   };
 
@@ -54,7 +56,12 @@ export default function SymptomsPage() {
     try {
       setIsLoading(true);
 
-      const yesSymptoms = Object.entries(formattedAnswers)
+      const updatedAnswers: Record<string, 'Yes' | 'No'> = {
+        ...followUpAnswers,
+        ...formattedAnswers
+      };
+
+      const yesSymptoms = Object.entries(updatedAnswers)
         .filter(([, ans]) => ans === 'Yes')
         .map(([key]) => key);
 
@@ -69,7 +76,7 @@ export default function SymptomsPage() {
           symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],
           image_paths: uploadedUrl ? [uploadedUrl] : [],
           num_data: 5,
-          answers: formattedAnswers
+          answers: updatedAnswers
         })
       });
 
@@ -81,13 +88,36 @@ export default function SymptomsPage() {
         return;
       }
 
-      const converted = data.predicted_diseases.map((d: { name: string; probability: number }) => ({
+      const converted: Prediction[] = data.predicted_diseases.map((d: { name: string; probability: number }) => ({
         disease: { name: d.name },
         probability: d.probability,
       }));
 
-      setPredictions(converted);
-      setStep('result');
+      const hasHighConfidence = converted.some(d => d.probability > 90);
+
+      if (hasHighConfidence || followUpCount >= 5) {
+        setPredictions(converted);
+        setStep('result');
+      } else {
+        const allAskedSymptoms = new Set([
+          ...symptoms.map(s => s.name),
+          ...Object.keys(updatedAnswers)
+        ]);
+
+        const topNames: string[] = data.top_names || [];
+        const newFollowUps = topNames.filter((name: string) => !allAskedSymptoms.has(name));
+
+        if (newFollowUps.length === 0) {
+          setPredictions(converted);
+          setStep('result');
+        } else {
+          setFollowUpAnswers(updatedAnswers);
+          setFollowUpCount(followUpCount + 1);
+          setFollowUpSymptoms(newFollowUps);
+          setPredictions(converted);
+          setStep('follow-ups');
+        }
+      }
     } catch (err) {
       console.error('Final prediction request failed:', err);
     } finally {
@@ -102,7 +132,8 @@ export default function SymptomsPage() {
     setFollowUpAnswers({});
     setFollowUpSymptoms([]);
     setPredictions([]);
-    setStep('symptoms');
+    setFollowUpCount(0);
+    setStep('introduction');
   };
 
   return (
@@ -144,10 +175,12 @@ export default function SymptomsPage() {
           <FollowupQuestions
             symptoms={followUpSymptoms}
             answers={followUpAnswers}
-            setAnswers={setFollowUpAnswers}
-            onNext={(formattedAnswers) => handleFinalSubmit(formattedAnswers)}
+            setAnswers={(a) => setFollowUpAnswers({ ...followUpAnswers, ...a })}
+            onNext={handleFinalSubmit}
             onBack={() => setStep('symptoms')}
+            count={followUpCount + 1}
           />
+
         )}
 
         {step === 'result' && (

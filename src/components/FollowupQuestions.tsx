@@ -1,9 +1,10 @@
 interface FollowupQuestionsProps {
   symptoms: string[];
-  answers: Record<string, boolean>;
-  setAnswers: (answers: Record<string, boolean>) => void;
+  answers: Record<string, 'Yes' | 'No'>;
+  setAnswers: (answers: Record<string, 'Yes' | 'No'>) => void;
   onNext: (formattedAnswers: Record<string, 'Yes' | 'No'>) => void;
   onBack: () => void;
+  count?: number; // optional: follow-up count
 }
 
 export default function FollowupQuestions({
@@ -11,37 +12,36 @@ export default function FollowupQuestions({
   answers,
   setAnswers,
   onNext,
-  onBack
+  onBack,
+  count
 }: FollowupQuestionsProps) {
   const toggleCheckbox = (symptom: string) => {
-    setAnswers({ ...answers, [symptom]: !answers[symptom] });
-  };
-
-  const convertAnswers = (
-    rawAnswers: Record<string, boolean>,
-    allSymptoms: string[]
-  ): Record<string, 'Yes' | 'No'> => {
-    const converted: Record<string, 'Yes' | 'No'> = {};
-    allSymptoms.forEach((symptom) => {
-      converted[symptom] = rawAnswers[symptom] ? 'Yes' : 'No';
-    });
-    return converted;
+    const current = answers[symptom] === 'Yes';
+    setAnswers({ ...answers, [symptom]: current ? 'No' : 'Yes' });
   };
 
   const handleNext = () => {
-    const formattedAnswers = convertAnswers(answers, symptoms);
+    const formattedAnswers: Record<string, 'Yes' | 'No'> = {};
+    symptoms.forEach(symptom => {
+      formattedAnswers[symptom] = answers[symptom] === 'Yes' ? 'Yes' : 'No';
+    });
     onNext(formattedAnswers);
   };
 
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
-      <h3 className="text-lg md:text-xl font-semibold text-[#005a74] mb-4">
-        Please tick the symptoms you are currently experiencing:
-      </h3>
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg md:text-xl font-semibold text-[#005a74] mb-2">
+          Please tick the symptoms you are currently experiencing:
+        </h3>
+        {count !== undefined && (
+          <span className="text-sm text-gray-500">Follow-up #{count-1}</span>
+        )}
+      </div>
 
       <div className="space-y-3">
         {symptoms.map((symptom) => {
-          const isChecked = !!answers[symptom];
+          const isChecked = answers[symptom] === 'Yes';
 
           return (
             <label

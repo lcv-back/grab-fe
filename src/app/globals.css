@@ -24,3 +24,23 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.prose h2 {
+  @apply text-[#005a74] text-xl font-semibold mt-6 mb-3;
+}
+
+.prose h3 {
+  @apply text-[#007a90] text-lg font-medium mt-5 mb-2;
+}
+
+.prose strong {
+  @apply text-[#444] font-semibold;
+}
+
+.prose ul {
+  @apply list-disc ml-5;
+}
+
+.prose hr {
+  @apply my-6 border-gray-300;
+}

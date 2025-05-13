@@ -30,10 +30,10 @@ export default function SymptomForm({
   onBack
 }: Props) {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+
   const handleUploadImage = async (file: File) => {
     setUploadStatus("uploading");
     try {
-      // const file = await convertHeicToJpeg(rawFile);
       const formData = new FormData();
       formData.append("file", file);
 
@@ -146,7 +146,36 @@ export default function SymptomForm({
         <div className="flex items-center gap-4">
           {image ? (
             <div className="relative w-20 h-20">
-              <img src={URL.createObjectURL(image)} alt="Preview" className="w-full h-full object-cover rounded-xl border" />
+              <img
+                src={URL.createObjectURL(image)}
+                alt="Preview"
+                className={`w-full h-full object-cover rounded-xl border transition-opacity duration-200 ${
+                  uploadStatus === 'uploading' ? 'opacity-40' : 'opacity-100'
+                }`}
+              />
+              {uploadStatus === 'uploading' && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 animate-spin text-[#00BDF9]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                </div>
+              )}
               <button onClick={handleDeleteImage} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
                 <X size={12} />
               </button>
@@ -161,8 +190,8 @@ export default function SymptomForm({
             </label>
           )}
           {uploadStatus === "uploading" && <span className="text-sm text-gray-500 animate-pulse">Uploading...</span>}
-          {uploadStatus === "success" && <span className="text-sm text-green-600">Uploaded ✅</span>}
-          {uploadStatus === "error" && <span className="text-sm text-red-600">Upload failed ❌</span>}
+          {uploadStatus === "success" && <span className="text-sm text-green-600">Uploaded</span>}
+          {uploadStatus === "error" && <span className="text-sm text-red-600">Upload failed</span>}
         </div>
       </div>
 
@@ -183,6 +212,5 @@ export default function SymptomForm({
         </button>
       </div>
     </div>
-
   );
 }

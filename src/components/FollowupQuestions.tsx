@@ -3,7 +3,7 @@ interface FollowupQuestionsProps {
   answers: Record<string, 'Yes' | 'No'>;
   setAnswers: (answers: Record<string, 'Yes' | 'No'>) => void;
   onNext: (formattedAnswers: Record<string, 'Yes' | 'No'>) => void;
-  onBack: () => void;
+  //onBack: () => void;
   count?: number; // optional: follow-up count
 }
 
@@ -12,7 +12,7 @@ export default function FollowupQuestions({
   answers,
   setAnswers,
   onNext,
-  onBack,
+  //onBack,
   count
 }: FollowupQuestionsProps) {
   const toggleCheckbox = (symptom: string) => {
@@ -64,13 +64,13 @@ export default function FollowupQuestions({
         })}
       </div>
 
-      <div className="flex justify-between pt-6">
-        <button
+      <div className="flex justify-end pt-6">
+        {/* <button
           onClick={onBack}
           className="text-sm text-gray-500 hover:underline"
         >
           ← Back
-        </button>
+        </button> */}
         <button
           onClick={handleNext}
           className="text-sm font-semibold bg-[#00BDF9] hover:bg-[#00acd6] text-white px-6 py-2 rounded-full transition"

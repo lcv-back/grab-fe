@@ -177,7 +177,7 @@ export default function SymptomsPage() {
             answers={followUpAnswers}
             setAnswers={(a) => setFollowUpAnswers({ ...followUpAnswers, ...a })}
             onNext={handleFinalSubmit}
-            onBack={() => setStep('symptoms')}
+            //onBack={() => setStep('symptoms')}
             count={followUpCount + 1}
           />
 
@@ -187,7 +187,7 @@ export default function SymptomsPage() {
           <DiagnosisResult
             predictions={predictions}
             onReset={handleReset}
-            onBack={() => setStep('follow-ups')}
+            // onBack={() => setStep('follow-ups')}
           />
         )}
       </div>

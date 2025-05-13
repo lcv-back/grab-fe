@@ -8,10 +8,10 @@ import { Prediction } from "@/types";
 interface DiagnosisResultProps {
   predictions: Prediction[];
   onReset: () => void;
-  onBack: () => void;
+  // onBack: () => void;
 }
 
-export default function DiagnosisResult({ predictions, onReset, onBack }: DiagnosisResultProps) {
+export default function DiagnosisResult({ predictions, onReset }: DiagnosisResultProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [diseaseDescriptions, setDiseaseDescriptions] = useState<Record<number, string>>({});
@@ -82,8 +82,8 @@ export default function DiagnosisResult({ predictions, onReset, onBack }: Diagno
           ))}
         </ul>
 
-        <div className="flex justify-between pt-4">
-          <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button>
+        <div className="flex justify-end pt-4">
+          {/* <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button> */}
           <button
             onClick={onReset}
             className="px-6 py-2 bg-[#00BDF9] hover:bg-[#00acd6] text-white rounded-full font-semibold"

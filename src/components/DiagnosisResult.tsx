@@ -3,7 +3,7 @@ import { marked } from "marked";
 import axios from "axios";
 import { Loader2, Copy, X } from "lucide-react";
 
-import { Prediction } from "@/types";
+import { Hospital, Prediction } from "@/types";
 
 interface DiagnosisResultProps {
   predictions: Prediction[];
@@ -19,7 +19,7 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms }: 
   const [readMoreIndex, setReadMoreIndex] = useState<number | null>(null);
 
   const [showHospitalModal, setShowHospitalModal] = useState(false);
-  const [hospitalData, setHospitalData] = useState<any[]>([]);
+  const [hospitalData, setHospitalData] = useState<Hospital[]>([]);
   const [isLoadingHospitals, setIsLoadingHospitals] = useState(false);
 
   const [confirmResetModal, setConfirmResetModal] = useState(false);

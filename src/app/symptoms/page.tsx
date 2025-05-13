@@ -142,60 +142,65 @@ export default function SymptomsPage() {
       <ProgressBar current={step} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10">
-        {isLoading && <p className="text-center text-sm text-gray-500 mb-4">Loading...</p>}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+            <div className="w-6 h-6 border-4 border-[#00BDF9] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm text-gray-500">Loading...</p>
+          </div>
+        ) : (
+          <>
+            {step === 'introduction' && (
+              <Introduction
+                onNext={() => setStep('symptoms')}
+                acceptedTerms={acceptedTerms}
+                agreedPrivacy={agreedPrivacy}
+                setAcceptedTerms={setAcceptedTerms}
+                setAgreedPrivacy={setAgreedPrivacy}
+                showTerms={showTerms}
+                setShowTerms={setShowTerms}
+              />
+            )}
 
-        {step === 'introduction' && (
-          <Introduction
-            onNext={() => setStep('symptoms')}
-            acceptedTerms={acceptedTerms}
-            agreedPrivacy={agreedPrivacy}
-            setAcceptedTerms={setAcceptedTerms}
-            setAgreedPrivacy={setAgreedPrivacy}
-            showTerms={showTerms}
-            setShowTerms={setShowTerms}
-          />
+            {step === 'symptoms' && (
+              <SymptomForm
+                symptoms={symptoms}
+                user={user!}
+                setSymptoms={setSymptoms}
+                image={image}
+                setImage={setImage}
+                setUploadedUrl={setUploadedUrl}
+                uploadedUrl={uploadedUrl!}
+                token={token}
+                onReceiveTopNames={handleReceiveTopNames}
+                onBack={() => setStep('introduction')}
+              />
+            )}
+
+            {step === 'follow-ups' && (
+              <FollowupQuestions
+                symptoms={followUpSymptoms}
+                answers={followUpAnswers}
+                setAnswers={(a) => setFollowUpAnswers({ ...followUpAnswers, ...a })}
+                onNext={handleFinalSubmit}
+                count={followUpCount + 1}
+              />
+            )}
+
+            {step === 'result' && (
+              <DiagnosisResult
+                predictions={predictions}
+                onReset={handleReset}
+                userSymptoms={[
+                  ...symptoms.map(s => s.name),
+                  ...Object.entries(followUpAnswers)
+                    .filter(([, v]) => v === 'Yes')
+                    .map(([k]) => k)
+                ]}
+              />
+            )}
+          </>
         )}
 
-        {step === 'symptoms' && (
-          <SymptomForm
-            symptoms={symptoms}
-            user={user!}
-            setSymptoms={setSymptoms}
-            image={image}
-            setImage={setImage}
-            setUploadedUrl={setUploadedUrl}
-            uploadedUrl={uploadedUrl!}
-            token={token}
-            onReceiveTopNames={handleReceiveTopNames}
-            onBack={() => setStep('introduction')}
-          />
-        )}
-
-        {step === 'follow-ups' && (
-          <FollowupQuestions
-            symptoms={followUpSymptoms}
-            answers={followUpAnswers}
-            setAnswers={(a) => setFollowUpAnswers({ ...followUpAnswers, ...a })}
-            onNext={handleFinalSubmit}
-            //onBack={() => setStep('symptoms')}
-            count={followUpCount + 1}
-          />
-
-        )}
-
-        {step === 'result' && (
-          <DiagnosisResult
-            predictions={predictions}
-            onReset={handleReset}
-            // onBack={() => setStep('follow-ups')}
-            userSymptoms={[
-              ...symptoms.map(s => s.name),
-              ...Object.entries(followUpAnswers)
-                .filter(([, v]) => v === 'Yes')
-                .map(([k]) => k)
-            ]}
-          />
-        )}
       </div>
     </main>
   );

@@ -22,3 +22,14 @@ export type Prediction = {
   disease: Disease;
   probability: number;
 }
+
+export type Hospital = {
+  name: string;
+  distance_km: number;
+  address: string;
+  phone: string;
+  website: string;
+  opening_hours: string;
+  lat: number;
+  lng: number;
+}

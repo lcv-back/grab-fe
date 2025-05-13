@@ -81,9 +81,7 @@ export default function ProfilePage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#e0f7ff] to-white p-4 sm:p-6">
-      {/* Profile Card */}
       <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-6 animate-slide-up">
-        {/* Back Button */}
         <div className="w-full max-w-md mb-4">
           <button
             onClick={() => router.back()}
@@ -93,7 +91,7 @@ export default function ProfilePage() {
             Back
           </button>
         </div>
-        {/* Logo */}
+
         <div className="flex justify-center mb-4">
           <Image
             src="/assets/logo.png"
@@ -116,13 +114,13 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        <div className="space-y-4 text-sm text-gray-700">
+        <div className="space-y-4 text-base text-gray-700">
           {/* Fullname */}
           <div className="flex items-center gap-3">
             <User size={20} className="text-[#00BDF9]" />
             {editMode ? (
               <input
-                className="border rounded-lg px-2 py-1 w-full"
+                className="w-full bg-transparent outline-none border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-700 placeholder-gray-400 focus-within:ring-2 focus-within:ring-[#00BDF9] transition"
                 value={fullname}
                 onChange={(e) => setFullname(e.target.value)}
               />
@@ -143,7 +141,7 @@ export default function ProfilePage() {
             {editMode ? (
               <input
                 type="date"
-                className="border rounded-lg px-2 py-1 w-full"
+                className="w-full bg-transparent outline-none border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-700 focus-within:ring-2 focus-within:ring-[#00BDF9] transition"
                 value={birthday}
                 onChange={(e) => setBirthday(e.target.value)}
               />
@@ -157,7 +155,7 @@ export default function ProfilePage() {
             <Smile size={20} className="text-[#00BDF9]" />
             {editMode ? (
               <select
-                className="border rounded-lg px-2 py-1 w-full"
+                className="w-full bg-transparent outline-none border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-700 focus:ring-2 focus:ring-[#00BDF9] transition"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
@@ -165,9 +163,7 @@ export default function ProfilePage() {
                 <option value="female">Female</option>
               </select>
             ) : (
-              <span>
-                {gender === 'male' ? 'Male' : gender === 'female' ? 'Female' : 'Other'}
-              </span>
+              <span>{gender === 'male' ? 'Male' : gender === 'female' ? 'Female' : 'Other'}</span>
             )}
           </div>
         </div>
@@ -178,7 +174,7 @@ export default function ProfilePage() {
         {editMode && (
           <button
             onClick={handleSave}
-            className="w-full mt-4 flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold transition-all"
+            className="w-full mt-4 flex items-center justify-center bg-[#00BDF9] hover:bg-[#00acd6] text-white py-2 rounded-lg font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
             disabled={saving}
           >
             {saving ? (

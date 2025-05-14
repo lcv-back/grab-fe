@@ -241,23 +241,25 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms, up
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start gap-4 mb-4 px-6 pt-6 sticky top-0 bg-white z-10">
-              <h3 className="text-2xl font-bold text-[#005a74] leading-snug">
-                {predictions[activeIndex].disease.name}
-              </h3>
+              
               <div className="flex gap-2 items-center">
+                <h3 className="text-2xl font-bold text-[#005a74] leading-snug">
+                  {predictions[activeIndex].disease.name}
+                </h3>
                 <button
                   onClick={() => handleCopy(activeIndex)}
                   className="text-sm text-gray-400 hover:text-[#00BDF9] flex items-center gap-1"
                 >
                   <Copy size={16} /> {copiedIndex === activeIndex ? "Copied" : "Copy name"}
                 </button>
-                <button
-                  onClick={handleClose}
-                  className="text-white bg-[#00BDF9] hover:bg-[#00acd6] rounded-full p-2 shadow-lg"
+                
+              </div>
+              <button
+                onClick={handleClose}
+                className="text-white bg-[#00BDF9] hover:bg-[#00acd6] rounded-full p-2 shadow-lg"
                 >
                   <X size={18} />
-                </button>
-              </div>
+              </button>
             </div>
             <div className="max-h-[75vh] overflow-y-auto px-6 pb-6 rounded-b-3xl scrollbar-thin scrollbar-thumb-[#00BDF9]/50 scrollbar-track-transparent custom-scrollbar">
               {loadingIndex === activeIndex ? (

@@ -135,9 +135,9 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms, up
               <p className="text-sm font-medium text-[#005a74] mb-2">Uploaded Images:</p>
               <div className="flex gap-4 flex-wrap">
                 {uploadedUrls.map((url, idx) => (
-                  <Image
+                  <img
                     key={idx}
-                    src={url}
+                    src={`/api/image-proxy?url=${encodeURIComponent(url)}`}
                     alt={`Uploaded ${idx + 1}`}
                     className="w-24 h-24 object-cover rounded-xl border"
                   />

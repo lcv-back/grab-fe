@@ -29,6 +29,7 @@ export default function SymptomForm({
   onReceiveTopNames,
   onBack,
 }: Props) {
+  const [isChecking, setIsChecking] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
 
   const handleUploadImage = async (file: File) => {
@@ -85,36 +86,38 @@ export default function SymptomForm({
   };
 
   const handleSubmit = async () => {
+    setIsChecking(true);
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`,
         {
           user_id: user?.id || "1",
-          symptoms: symptoms.map((s) => s.name),
+          symptoms: symptoms.map(s => s.name),
           image_paths: uploadedUrls,
           num_data: 5,
-          answers: {},
+          answers: {}
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 
       const { top_names, predicted_diseases } = res.data;
-      const convertedPredictions: Prediction[] = predicted_diseases.map(
-        (d: { name: string; probability: number }) => ({
-          disease: { name: d.name },
-          probability: d.probability,
-        })
-      );
+      const convertedPredictions: Prediction[] = predicted_diseases.map((d: { name: string; probability: number }) => ({
+        disease: { name: d.name },
+        probability: d.probability,
+      }));
 
       onReceiveTopNames(top_names, convertedPredictions);
     } catch (err) {
       console.error("Prediction request failed", err);
+    } finally {
+      setIsChecking(false);
     }
   };
+
 
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 w-full max-w-xl space-y-6 mx-auto">
@@ -202,16 +205,27 @@ export default function SymptomForm({
         <button
           onClick={handleSubmit}
           disabled={
-            uploadStatus === "uploading" || (symptoms.length === 0 && images.length === 0)
+            isChecking || uploadStatus === 'uploading' || (symptoms.length === 0 && images.length === 0)
           }
-          className={`px-6 py-2 rounded-full text-sm font-semibold transition ${
-            uploadStatus === "uploading" || (symptoms.length === 0 && images.length === 0)
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-[#00BDF9] hover:bg-[#00acd6] text-white"
+          className={`px-6 py-2 rounded-full text-sm font-semibold flex items-center justify-center gap-2 transition ${
+            isChecking || uploadStatus === 'uploading' || (symptoms.length === 0 && images.length === 0)
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-[#00BDF9] hover:bg-[#00acd6] text-white'
           }`}
         >
-          Check
+          {isChecking ? (
+            <>
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              Checking...
+            </>
+          ) : (
+            'Check'
+          )}
         </button>
+
       </div>
     </div>
   );

@@ -1,17 +1,17 @@
 import { X, Plus } from "lucide-react";
 import AutocompleteSymptomInput from "@/components/AutoCompleteSymptomInput";
 import type { Symptom, Prediction, User } from "@/types";
-import axios from 'axios';
-import { useState } from 'react';
+import axios from "axios";
+import { useState, Dispatch, SetStateAction } from "react";
 
 interface Props {
   symptoms: Symptom[];
   user: User;
   setSymptoms: (s: Symptom[]) => void;
-  image: File | null;
-  setImage: (img: File | null) => void;
-  uploadedUrl: string;
-  setUploadedUrl: (url: string) => void;
+  images: File[];
+  setImages: Dispatch<SetStateAction<File[]>>;
+  uploadedUrls: string[];
+  setUploadedUrls: Dispatch<SetStateAction<string[]>>;
   token: string;
   onReceiveTopNames: (topNames: string[], predictions: Prediction[]) => void;
   onBack: () => void;
@@ -21,17 +21,22 @@ export default function SymptomForm({
   symptoms,
   user,
   setSymptoms,
-  image,
-  setImage,
-  uploadedUrl,
-  setUploadedUrl,
+  images,
+  setImages,
+  uploadedUrls,
+  setUploadedUrls,
   token,
   onReceiveTopNames,
-  onBack
+  onBack,
 }: Props) {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
 
   const handleUploadImage = async (file: File) => {
+    if (images.length >= 3) {
+      alert("You can upload up to 3 images.");
+      return;
+    }
+
     setUploadStatus("uploading");
     try {
       const formData = new FormData();
@@ -49,8 +54,8 @@ export default function SymptomForm({
       );
 
       if (res.data?.url) {
-        setUploadedUrl(res.data.url);
-        setImage(file);
+        setUploadedUrls(prev => [...prev, res.data.url]);
+        setImages(prev => [...prev, file]);
         setUploadStatus("success");
       } else {
         setUploadStatus("error");
@@ -61,22 +66,21 @@ export default function SymptomForm({
     }
   };
 
-  const handleDeleteImage = async () => {
-    if (!uploadedUrl) return;
+  const handleDeleteImage = async (index: number) => {
+    const url = uploadedUrls[index];
     try {
       await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/images/`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        data: { url: uploadedUrl }
+        data: { url },
       });
     } catch (error) {
       console.error("Image delete error:", error);
     } finally {
-      setImage(null);
-      setUploadedUrl("");
-      setUploadStatus("idle");
+      setUploadedUrls((prev) => prev.filter((_, i) => i !== index));
+      setImages((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -86,23 +90,25 @@ export default function SymptomForm({
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/symptoms/predict`,
         {
           user_id: user?.id || "1",
-          symptoms: symptoms.map(s => s.name),
-          image_paths: uploadedUrl ? [uploadedUrl] : [],
+          symptoms: symptoms.map((s) => s.name),
+          image_paths: uploadedUrls,
           num_data: 5,
-          answers: {}
+          answers: {},
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       const { top_names, predicted_diseases } = res.data;
-      const convertedPredictions: Prediction[] = predicted_diseases.map((d: { name: string; probability: number }) => ({
-        disease: { name: d.name },
-        probability: d.probability,
-      }));
+      const convertedPredictions: Prediction[] = predicted_diseases.map(
+        (d: { name: string; probability: number }) => ({
+          disease: { name: d.name },
+          probability: d.probability,
+        })
+      );
 
       onReceiveTopNames(top_names, convertedPredictions);
     } catch (err) {
@@ -130,7 +136,11 @@ export default function SymptomForm({
                 className="bg-[#fca5a5] text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
               >
                 {s.name}
-                <button onClick={() => setSymptoms(symptoms.filter((x) => x.id !== s.id || x.name !== s.name))}>
+                <button
+                  onClick={() =>
+                    setSymptoms(symptoms.filter((x) => x.id !== s.id || x.name !== s.name))
+                  }
+                >
                   <X size={12} />
                 </button>
               </span>
@@ -142,70 +152,62 @@ export default function SymptomForm({
       </div>
 
       <div>
-        <p className="text-sm font-medium text-[#005a74] mb-2">Upload an image (optional):</p>
-        <div className="flex items-center gap-4">
-          {image ? (
-            <div className="relative w-20 h-20">
+        <p className="text-sm font-medium text-[#005a74] mb-2">Upload images (optional):</p>
+        <div className="flex flex-wrap gap-4">
+          {images.map((img, idx) => (
+            <div key={idx} className="relative w-20 h-20">
               <img
-                src={URL.createObjectURL(image)}
-                alt="Preview"
-                className={`w-full h-full object-cover rounded-xl border transition-opacity duration-200 ${
-                  uploadStatus === 'uploading' ? 'opacity-40' : 'opacity-100'
-                }`}
+                src={URL.createObjectURL(img)}
+                alt={`Preview ${idx}`}
+                className="w-full h-full object-cover rounded-xl border"
               />
-              {uploadStatus === 'uploading' && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 animate-spin text-[#00BDF9]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    />
-                  </svg>
-                </div>
-              )}
-              <button onClick={handleDeleteImage} className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100">
+              <button
+                onClick={() => handleDeleteImage(idx)}
+                className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-red-500 hover:bg-red-100"
+              >
                 <X size={12} />
               </button>
             </div>
-          ) : (
+          ))}
+          {images.length < 3 && (
             <label className="cursor-pointer w-20 h-20 rounded-xl border-2 border-dashed border-[#00BDF9] flex items-center justify-center hover:bg-blue-50 duration-200">
-              <input type="file" accept="image/*" onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleUploadImage(file);
-              }} hidden />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUploadImage(file);
+                }}
+                hidden
+              />
               <Plus className="text-[#00BDF9]" />
             </label>
           )}
-          {uploadStatus === "uploading" && <span className="text-sm text-gray-500 animate-pulse">Uploading...</span>}
-          {uploadStatus === "success" && <span className="text-sm text-green-600">Uploaded</span>}
-          {uploadStatus === "error" && <span className="text-sm text-red-600">Upload failed</span>}
         </div>
+        {uploadStatus === "uploading" && (
+          <span className="text-sm text-gray-500 animate-pulse">Uploading...</span>
+        )}
+        {uploadStatus === "success" && (
+          <span className="text-sm text-green-600">Uploaded</span>
+        )}
+        {uploadStatus === "error" && (
+          <span className="text-sm text-red-600">Upload failed</span>
+        )}
       </div>
 
       <div className="flex justify-between items-center pt-2">
-        <button onClick={onBack} className="text-sm text-gray-500 hover:underline">← Back</button>
+        <button onClick={onBack} className="text-sm text-gray-500 hover:underline">
+          ← Back
+        </button>
         <button
           onClick={handleSubmit}
           disabled={
-            uploadStatus === 'uploading' || (symptoms.length === 0 && !image)
+            uploadStatus === "uploading" || (symptoms.length === 0 && images.length === 0)
           }
           className={`px-6 py-2 rounded-full text-sm font-semibold transition ${
-            uploadStatus === 'uploading' || (symptoms.length === 0 && !image)
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-[#00BDF9] hover:bg-[#00acd6] text-white'
+            uploadStatus === "uploading" || (symptoms.length === 0 && images.length === 0)
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#00BDF9] hover:bg-[#00acd6] text-white"
           }`}
         >
           Check

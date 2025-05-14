@@ -11,10 +11,11 @@ import type { Symptom, Prediction } from "@/types";
 
 export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [token, setToken] = useState("");
   const { user, loading } = useAuth();
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
@@ -48,7 +49,7 @@ export default function SymptomsPage() {
   };
 
   const handleFinalSubmit = async (formattedAnswers: Record<string, 'Yes' | 'No'>) => {
-    if (symptoms.length === 0 && !uploadedUrl) {
+    if (symptoms.length === 0 && !uploadedUrls) {
       alert("Please provide at least one symptom or upload an image before submitting.");
       return;
     }
@@ -74,7 +75,7 @@ export default function SymptomsPage() {
         body: JSON.stringify({
           user_id: user?.id || "1",
           symptoms: [...symptoms.map(s => s.name), ...yesSymptoms],
-          image_paths: uploadedUrl ? [uploadedUrl] : [],
+          image_paths: uploadedUrls,
           num_data: 5,
           answers: updatedAnswers
         })
@@ -127,8 +128,8 @@ export default function SymptomsPage() {
 
   const handleReset = () => {
     setSymptoms([]);
-    setImage(null);
-    setUploadedUrl(null);
+    setImages([]);
+    setUploadedUrls([]);
     setFollowUpAnswers({});
     setFollowUpSymptoms([]);
     setPredictions([]);
@@ -166,14 +167,15 @@ export default function SymptomsPage() {
                 symptoms={symptoms}
                 user={user!}
                 setSymptoms={setSymptoms}
-                image={image}
-                setImage={setImage}
-                setUploadedUrl={setUploadedUrl}
-                uploadedUrl={uploadedUrl!}
+                images={images}
+                setImages={setImages}
+                uploadedUrls={uploadedUrls}
+                setUploadedUrls={setUploadedUrls}
                 token={token}
                 onReceiveTopNames={handleReceiveTopNames}
                 onBack={() => setStep('introduction')}
               />
+
             )}
 
             {step === 'follow-ups' && (
@@ -196,6 +198,7 @@ export default function SymptomsPage() {
                     .filter(([, v]) => v === 'Yes')
                     .map(([k]) => k)
                 ]}
+                uploadedUrls={uploadedUrls}
               />
             )}
           </>

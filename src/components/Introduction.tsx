@@ -29,13 +29,13 @@ export default function Introduction({
         <h2 className="text-lg md:text-xl font-bold text-[#005a74]">Terms of Service</h2>
         <ul className="list-disc pl-5 space-y-2 text-gray-700">
           <li>
-            iSymptom isn&apos;t a diagnosis. It&apos;s only for your information and not a qualified medical opinion.
+            iSymptom does not provide medical diagnoses. It offers general information and should not replace professional medical advice.
           </li>
           <li>
-            iSymptom   isn&apos;t for emergencies. Call your local emergency number right away when there&apos;s a health emergency.
+            iSymptom is not for emergencies. In urgent situations, contact your local emergency services immediately.
           </li>
           <li>
-            Your data is safe. The information you give won&apos;t be shared or used to identify you.
+            Your privacy is protected. All information you share remains confidential and will never be used to identify you.
           </li>
         </ul>
 
@@ -90,12 +90,12 @@ export default function Introduction({
         <div>
           <h1 className="text-lg md:text-xl font-bold text-[#005a74] mb-4">Check your symptoms</h1>
           <p className="text-[#333] text-base leading-relaxed">
-            Take a short symptom assessment. The information you give is safe and won&apos;t be shared.
-            Your results will include:
+            Complete a quick symptom check. Your information remains private and secure.
+            The results will provide:
           </p>
           <ul className="list-disc pl-6 mt-3 text-gray-700">
-            <li>Possible causes of symptoms.</li>
-            <li>Description of each disease you&apos;re might having.</li>
+            <li>Potential causes related to your symptoms.</li>
+            <li>Detailed descriptions of each possible condition</li>
           </ul>
         </div>
 

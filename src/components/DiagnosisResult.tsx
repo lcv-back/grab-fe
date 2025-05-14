@@ -9,9 +9,10 @@ interface DiagnosisResultProps {
   predictions: Prediction[];
   onReset: () => void;
   userSymptoms: string[];
+  uploadedUrls?: string[];
 }
 
-export default function DiagnosisResult({ predictions, onReset, userSymptoms }: DiagnosisResultProps) {
+export default function DiagnosisResult({ predictions, onReset, userSymptoms, uploadedUrls }: DiagnosisResultProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [diseaseDescriptions, setDiseaseDescriptions] = useState<Record<number, string>>({});
@@ -116,7 +117,7 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms }: 
             >
               <div className="flex justify-between items-center">
                 <span className="font-medium text-[#005a74]">{p.disease.name}</span>
-                <span className="text-sm text-gray-600">{p.probability}%</span>
+                <span className="text-sm text-gray-600">{p.probability.toFixed(2)}%</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2 mt-2">
                 <div className="bg-[#00BDF9] h-2 rounded-full" style={{ width: `${p.probability}%` }} />
@@ -128,6 +129,22 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms }: 
 
         <div className="flex flex-col gap-2 mt-4">
           <h3 className="text-lg font-semibold text-[#005a74]">Your Reported Symptoms</h3>
+          {uploadedUrls && uploadedUrls.length > 0 && (
+            <div className="">
+              <p className="text-sm font-medium text-[#005a74] mb-2">Uploaded Images:</p>
+              <div className="flex gap-4 flex-wrap">
+                {uploadedUrls.map((url, idx) => (
+                  <img
+                    key={idx}
+                    src={url}
+                    alt={`Uploaded ${idx + 1}`}
+                    className="w-24 h-24 object-cover rounded-xl border"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {userSymptoms.length === 0 ? (
             <p className="text-sm text-gray-500 italic">No symptoms provided.</p>
           ) : (

@@ -4,6 +4,7 @@ import axios from "axios";
 import { Loader2, Copy, X } from "lucide-react";
 
 import { Hospital, Prediction } from "@/types";
+import Image from "next/image";
 
 interface DiagnosisResultProps {
   predictions: Prediction[];
@@ -134,7 +135,7 @@ export default function DiagnosisResult({ predictions, onReset, userSymptoms, up
               <p className="text-sm font-medium text-[#005a74] mb-2">Uploaded Images:</p>
               <div className="flex gap-4 flex-wrap">
                 {uploadedUrls.map((url, idx) => (
-                  <img
+                  <Image
                     key={idx}
                     src={url}
                     alt={`Uploaded ${idx + 1}`}

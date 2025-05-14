@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
       },
     })
   } catch (error) {
+    console.error('Error fetching image:', error)
     return new Response('Failed to load image', { status: 500 })
   }
 }

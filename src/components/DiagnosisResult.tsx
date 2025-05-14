@@ -4,7 +4,6 @@ import axios from "axios";
 import { Loader2, Copy, X } from "lucide-react";
 
 import { Hospital, Prediction } from "@/types";
-import Image from "next/image";
 
 interface DiagnosisResultProps {
   predictions: Prediction[];

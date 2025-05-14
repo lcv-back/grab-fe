@@ -10,16 +10,18 @@ import { Menu, X } from 'lucide-react';
 export default function Header() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+
   const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        handleClose();
       }
     };
     if (isOpen) {
@@ -30,33 +32,43 @@ export default function Header() {
     };
   }, [isOpen]);
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 300); // Match CSS animation duration
+  };
+
   const MobileMenu = (
     <>
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999]"
-        onClick={() => setIsOpen(false)}
+        onClick={handleClose}
       />
       <div
         ref={panelRef}
-        className="fixed top-0 right-0 h-full w-[80%] max-w-xs bg-white z-[1000] shadow-lg transition-transform duration-300 ease-in-out animate-slide-in"
+        className={`fixed top-0 right-0 h-full w-[80%] max-w-xs bg-white z-[1000] shadow-lg transition-transform duration-300 ease-in-out ${
+          isClosing ? 'animate-slide-out' : 'animate-slide-in'
+        }`}
       >
         <div className="flex justify-between items-center px-4 py-3 border-b">
           <h3 className="text-lg font-semibold text-[#005a74]">Menu</h3>
-          <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-[#00BDF9]">
+          <button onClick={handleClose} className="text-gray-400 hover:text-[#00BDF9]">
             <X size={22} />
           </button>
         </div>
         <nav className="flex flex-col gap-4 px-4 py-4 text-[#005a74] font-medium">
-          <Link href="/symptoms" onClick={() => setIsOpen(false)} className="hover:text-[#00BDF9]">Symptom Checker</Link>
-          <Link href="/outbreaks" onClick={() => setIsOpen(false)} className="hover:text-[#00BDF9]">News</Link>
+          <Link href="/symptoms" onClick={handleClose} className="hover:text-[#00BDF9]">Symptom Checker</Link>
+          <Link href="/outbreaks" onClick={handleClose} className="hover:text-[#00BDF9]">News</Link>
           <hr />
           {user ? (
             <>
-              <Link href="/profile" onClick={() => setIsOpen(false)} className="hover:underline">{user.fullname}</Link>
+              <Link href="/profile" onClick={handleClose} className="hover:underline">{user.fullname}</Link>
               <button
                 onClick={() => {
                   logout();
-                  setIsOpen(false);
+                  handleClose();
                 }}
                 className="text-red-500 hover:text-red-600 font-semibold text-left"
               >
@@ -67,7 +79,7 @@ export default function Header() {
             <button
               onClick={() => {
                 router.push('/login');
-                setIsOpen(false);
+                handleClose();
               }}
               className="text-[#00BDF9] hover:text-[#00acd6] font-semibold text-left"
             >
@@ -123,7 +135,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Render mobile menu into body to prevent layout clipping */}
       {mounted && isOpen && typeof window !== 'undefined'
         ? ReactDOM.createPortal(MobileMenu, document.body)
         : null}

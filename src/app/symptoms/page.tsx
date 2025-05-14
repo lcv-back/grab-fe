@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import Introduction from "@/components/Introduction";
@@ -8,6 +8,7 @@ import FollowupQuestions from "@/components/FollowupQuestions";
 import DiagnosisResult from "@/components/DiagnosisResult";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Symptom, Prediction } from "@/types";
+import { useRouter } from "next/navigation";
 
 export default function SymptomsPage() {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
@@ -15,7 +16,7 @@ export default function SymptomsPage() {
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [token, setToken] = useState("");
   const { user, loading } = useAuth();
-  
+  const router = useRouter();
 
   const [step, setStep] = useState<'introduction' | 'symptoms' | 'follow-ups' | 'result'>('introduction');
   const [followUpSymptoms, setFollowUpSymptoms] = useState<string[]>([]);
@@ -29,8 +30,22 @@ export default function SymptomsPage() {
   const [showTerms, setShowTerms] = useState(false);
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
     const savedToken = localStorage.getItem("access_token");
     if (savedToken) setToken(savedToken);
+
+    const savedAcceptedTerms = localStorage.getItem("acceptedTerms");
+    const savedAgreedPrivacy = localStorage.getItem("agreedPrivacy");
+
+    if (savedAcceptedTerms === "true") setAcceptedTerms(true);
+    if (savedAgreedPrivacy === "true") setAgreedPrivacy(true);
+    if (!savedAcceptedTerms || !savedAgreedPrivacy) {
+      setStep('introduction');
+    } else {
+      setStep('symptoms');
+    }
   }, [loading, user]);
 
   useEffect(() => {
@@ -134,7 +149,7 @@ export default function SymptomsPage() {
     setFollowUpSymptoms([]);
     setPredictions([]);
     setFollowUpCount(0);
-    setStep('introduction');
+    setStep('symptoms');
   };
 
   return (
@@ -152,7 +167,11 @@ export default function SymptomsPage() {
           <>
             {step === 'introduction' && (
               <Introduction
-                onNext={() => setStep('symptoms')}
+                onNext={() => {
+                  localStorage.setItem("acceptedTerms", JSON.stringify(acceptedTerms));
+                  localStorage.setItem("agreedPrivacy", JSON.stringify(agreedPrivacy));
+                  setStep('symptoms');
+                }}
                 acceptedTerms={acceptedTerms}
                 agreedPrivacy={agreedPrivacy}
                 setAcceptedTerms={setAcceptedTerms}
@@ -175,7 +194,6 @@ export default function SymptomsPage() {
                 onReceiveTopNames={handleReceiveTopNames}
                 onBack={() => setStep('introduction')}
               />
-
             )}
 
             {step === 'follow-ups' && (

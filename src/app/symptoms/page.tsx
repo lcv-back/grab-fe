@@ -153,7 +153,7 @@ export default function SymptomsPage() {
   };
 
   return (
-    <main className="relative z-0 min-h-screen bg-[#f9fafa]">
+    <main className="relative min-h-screen bg-[#f9fafa]">
       <Header />
       <ProgressBar current={step} />
 
